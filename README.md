@@ -1,4 +1,4 @@
-源码下载地址请看最后面的下载按钮
+# Mtab安装教程
 
 **准备环境 Linux系统+php7.4+mysql8(mysql5.7也行，支持json就行)+Nginx+Redis;**
 
