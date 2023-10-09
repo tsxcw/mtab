@@ -1,0 +1,14 @@
+/.idea
+/.vscode
+*.log
+.env
+storage
+/runtime/
+private.key
+publickey.key
+/config/jsonConfig/siteConfig.json
+/.well-known
+public/.user.ini
+public/images
+public/installed.lock
+.user.ini

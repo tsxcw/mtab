@@ -1,0 +1,48 @@
+{
+	"name": "nette/mail",
+	"description": "📧 Nette Mail: handy email creation and transfer library for PHP with both text and MIME-compliant support.",
+	"keywords": ["nette", "mail", "mailer", "smtp", "mime"],
+	"homepage": "https://nette.org",
+	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
+	"authors": [
+		{
+			"name": "David Grudl",
+			"homepage": "https://davidgrudl.com"
+		},
+		{
+			"name": "Nette Community",
+			"homepage": "https://nette.org/contributors"
+		}
+	],
+	"require": {
+		"php": ">=7.1 <8.3",
+		"ext-iconv": "*",
+		"nette/utils": "^3.1 || ~4.0.0"
+	},
+	"require-dev": {
+		"nette/di": "^3.0.0",
+		"nette/tester": "^2.0",
+		"tracy/tracy": "^2.4",
+		"phpstan/phpstan-nette": "^0.12"
+	},
+	"conflict": {
+		"nette/di": "<3.0-stable"
+	},
+	"suggest": {
+		"ext-fileinfo": "to detect type of attached files",
+		"ext-openssl": "to use Nette\\Mail\\DkimSigner"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"minimum-stability": "dev",
+	"scripts": {
+		"phpstan": "phpstan analyse",
+		"tester": "tester tests -s"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "3.1-dev"
+		}
+	}
+}
