@@ -22,13 +22,11 @@ Mtab书签的界面设计美观简洁，操作简单直观，让你可以专注�
 
 ### Demo演示站
 
-<div style="background: #ffffff;border-radius: 15px;padding: 20px;color:#0e0e0e;">
-<a href="https://demo.mtab.cc" style="font-size: 18px;color: #1d5cdc">演示站Demo入口</a>
-<br/>
+#### **[演示站Demo入口](https://demo.mtab.cc)**
+
 演示账号：admin
-<br/>
+
 演示密码：123456
-</div>
 
 
 # Mtab安装教程
