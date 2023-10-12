@@ -82,15 +82,6 @@ private static $installed = array (
       ),
       'reference' => 'ff6248ea87a9f116e78edd6002e39e5128a0d4dd',
     ),
-    'monolog/monolog' => 
-    array (
-      'pretty_version' => '2.9.1',
-      'version' => '2.9.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'f259e2b15fb95494c83f52d3caad003bbf5ffaa1',
-    ),
     'myclabs/php-enum' => 
     array (
       'pretty_version' => '1.8.4',
@@ -117,15 +108,6 @@ private static $installed = array (
       array (
       ),
       'reference' => 'c91bac3470c34b2ecd5400f6e6fdf0b64a836a5c',
-    ),
-    'obs/esdk-obs-php' => 
-    array (
-      'pretty_version' => '3.23.5',
-      'version' => '3.23.5.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'caf8506144f11377b048c88f6c8aa1338e87bab9',
     ),
     'paquettg/php-html-parser' => 
     array (
@@ -212,13 +194,6 @@ private static $installed = array (
       array (
       ),
       'reference' => 'd49695b909c3b7628b6289db5479a1c204601f11',
-    ),
-    'psr/log-implementation' => 
-    array (
-      'provided' => 
-      array (
-        0 => '1.0.0 || 2.0.0 || 3.0.0',
-      ),
     ),
     'psr/simple-cache' => 
     array (

@@ -13,8 +13,6 @@ use app\model\SettingModel;
 use app\model\TokenModel;
 use app\model\UserModel;
 
-;
-
 use think\App;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
