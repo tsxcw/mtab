@@ -16,7 +16,8 @@ class Api extends BaseController
     public function site(): \think\response\Json
     {
         return $this->success("ok", [
-            'email' => $this->Setting('email', '')
+            'email' => $this->Setting('email', ''),
+            "recordNumber" => $this->Setting("recordNumber", '')
         ]);
     }
 
