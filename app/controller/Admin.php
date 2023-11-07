@@ -4,8 +4,6 @@ namespace app\controller;
 
 use app\BaseController;
 use app\model\UserModel;
-use GuzzleHttp\Exception\GuzzleException;
-use think\facade\Log;
 
 class Admin extends BaseController
 {
@@ -34,6 +32,8 @@ class Admin extends BaseController
         //如果字段中的password有内容则md5加密后保存
         if (isset($data['password']) && mb_strlen($data['password']) > 0) {
             $data['password'] = md5($data['password']);
+        } else {
+            unset($data['password']);
         }
         $user->save($data);
         return $this->success('ok');

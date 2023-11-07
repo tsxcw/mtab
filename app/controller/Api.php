@@ -63,14 +63,21 @@ class Api extends BaseController
             $urlInfo = parse_url($url);
             $host = $urlInfo['host'] ?? $urlInfo['path'];
             $title = '';
-            $scheme = "https";
+            $scheme = "http";
             if (isset($urlInfo['scheme'])) {
                 $scheme = $urlInfo["scheme"];
             }
             $realUrl = $scheme . "://" . $host;
-            $client = new Client();
-            $response = $client->get($realUrl);
-            $status = $response->getStatusCode();
+            $client = \Axios::http();
+            $response = null;
+            $status = null;
+            try {
+                $response = $client->get($realUrl);
+                $status = $response->getStatusCode();
+            } catch (\Exception $e) {
+                return $this->error('获取失败');
+            }
+
             if ($status == 200) {
                 $body = $response->getBody()->getContents();
                 $dom = new Dom();
@@ -83,13 +90,27 @@ class Api extends BaseController
                     $list = $dom->find('[rel="icon"]');
                     if (count($list) > 0) {
                         $icon = $list->href;
-                        if (preg_match('/\.(png|jpg|jpeg|ico|svg )$/', $icon, $matches)) {
-                            $fileFormat = $matches[1];
-                            $iconInfo = parse_url($icon);
-                            if (!isset($iconInfo['scheme'])) {
+                        $iconInfo = parse_url($icon);
+                        if (!isset($iconInfo['scheme'])) {
+                            if (isset($iconInfo['host'])) {
+                                $icon = "https://" . $iconInfo["host"] . $icon;
+                            } else {
                                 $icon = $realUrl . $icon;
                             }
-                            $icon = $this->downloadFile($icon, md5($realUrl) . '.' . $fileFormat);
+                        }
+                        $response = \Axios::http()->head($icon);
+                        $contentType = $response->getHeader('content-type');
+                        $contentType = $contentType[0];
+                        if (preg_match('/(png|jpg|jpeg|x-icon|svg\+xml)$/', $contentType, $matches)) {
+                            $contentType = array(
+                                'png' => 'png',
+                                'jpg' => 'jpg',
+                                'jpeg' => 'jpeg',
+                                'x-icon' => 'ico',
+                                'svg+xml' => 'svg'
+                            );
+                            $fileFormat = $matches[1];
+                            $icon = $this->downloadFile($icon, md5($realUrl) . '.' . $contentType[$fileFormat]);
                             if ($icon) {
                                 $icon = $cdn . $icon;
                             }
@@ -102,15 +123,19 @@ class Api extends BaseController
                 }
             }
             if (strlen($icon) == 0) {
-                $client = new Client();
-                $response = $client->get($realUrl . '/favicon.ico');
-                $status = $response->getStatusCode();
-                if ($status == 200) {
-                    $icon = $realUrl . '/favicon.ico';
-                    $icon = $this->downloadFile($icon, md5($realUrl) . ".ico");
-                    if ($icon) {
-                        $icon = $cdn . $icon;
+                try {
+                    $client = \Axios::http();
+                    $response = $client->get($realUrl . '/favicon.ico');
+                    $status = $response->getStatusCode();
+                    if ($status == 200) {
+                        $icon = $realUrl . '/favicon.ico';
+                        $icon = $this->downloadFile($icon, md5($realUrl) . '.ico');
+                        if ($icon) {
+                            $icon = $cdn . $icon;
+                        }
                     }
+                } catch (\Exception $e) {
+
                 }
             }
             if (strlen($icon) > 0) {
@@ -122,7 +147,7 @@ class Api extends BaseController
 
     private function downloadFile($url, $name)
     {
-        $client = new Client();
+        $client = \Axios::http();
         $path = '/images/' . date('Y/m/d/');
         $remotePath = public_path() . $path;
         $downloadPath = $remotePath . $name;
@@ -160,7 +185,7 @@ class Api extends BaseController
         if ($file->getSize() > 1024 * 1024 * 5) {
             return $this->error('max fileSize is 5M');
         }
-        if (in_array(strtolower($file->getOriginalExtension()), ['png', 'jpg', 'jpeg', 'webp'])) {
+        if (in_array(strtolower($file->getOriginalExtension()), ['png', 'jpg', 'jpeg', 'webp', 'ico'])) {
             // 验证文件并保存
             try {
                 // 构建保存路径

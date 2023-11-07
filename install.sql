@@ -32,7 +32,7 @@ create table linkstore
     size        varchar(20) default '1x1'  null,
     create_time datetime                   null,
     hot         bigint      default 0      null,
-    area        varchar(20) default '综合' null comment '专区',
+    area        varchar(20) default '' null comment '专区',
     tips        varchar(30)                null comment '介绍',
     domain      varchar(100)               null,
     app         int         default 0      null comment '是否app',
@@ -102,6 +102,15 @@ create table user
         unique (mail)
 );
 
+
+create table link_folder
+(
+    id   int auto_increment comment 'id'
+        primary key,
+    name varchar(50)   null comment '分类名称',
+    sort int default 0 null
+)
+    comment '标签链接分类';
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, area, tips, domain, app, install_num) VALUES ('Bilibili', '/static/bilibili.png', 'https://bilibili.com', 'icon', '1x1', '2022-11-07 21:51:42', 0, '娱乐,社交,推荐,资讯', 'Bilibili弹幕视频网站Acg网站', 'bilibili.com,www.bilibili.com', 0, 0);
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, area, tips, domain, app, install_num) VALUES ('蓝易云', '/static/tsy.png', 'https://www.tsyvps.com/aff/IRYIGFMX', 'icon', '1x1', '2022-11-07 22:02:41', 0, '综合,开发,推荐', '蓝易云-持证高性价比服务器', 'www.tsyvps.com,tsyvps.com', 0, 0);
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, area, tips, domain, app, install_num) VALUES ('ImgUrl', '/static/imgurl.png', 'https://imgurl.ink', 'icon', '1x1', '2022-11-07 22:05:46', 0, '推荐,综合,开发,在线工具', 'ImgUrl图床，图片外链', 'imgurl.ink,www.imgurl.ink', 0, 0);

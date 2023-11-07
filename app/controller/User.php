@@ -60,7 +60,7 @@ class User extends BaseController
                 return $this->error("密码过短");
             }
             $cacheCode = Cache::get("code" . $user);
-            if (!$cacheCode && $cacheCode != $code) {
+            if (!$cacheCode || $cacheCode != $code) {
                 return $this->error('验证码错误');
             }
             if (UserModel::where("mail", $user)->field("id,mail")->find()) {

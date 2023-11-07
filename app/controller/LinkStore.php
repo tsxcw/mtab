@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\BaseController;
+use app\model\LinkFolderModel;
 use app\model\LinkStoreModel;
 use think\facade\Db;
 
@@ -15,15 +16,39 @@ class LinkStore extends BaseController
         $area = $this->request->post('area', false);
         $sql = [];
         if ($name) {
-            $sql[] = ['name', 'like', "%" . $name . "%"];
+            $sql[] = ['name|tips', 'like', "%" . $name . "%"];
         }
         $list = LinkStoreModel::where($sql);
         //area需要使用find_in_set来匹配
-        if ($area) {
+        if ($area && $area != '全部') {
             $list = $list->whereRaw("find_in_set('$area',area)");
         }
         $list = $list->order("hot", 'desc')->paginate($limit);
         return $this->success('ok', $list);
+    }
+
+    public function ListManager(): \think\response\Json
+    {
+        $admin = $this->getAdmin();
+        $limit = $this->request->post('limit', 15);
+        $name = $this->request->post('search.name', false);
+        $area = $this->request->post('search.area', false);
+        $sql = [];
+        if ($name) {
+            $sql[] = ['name|tips', 'like', '%' . $name . '%'];
+        }
+        $list = LinkStoreModel::where($sql);
+        //area需要使用find_in_set来匹配
+        if ($area && $area != '全部') {
+            $list = $list->whereRaw("find_in_set('$area',area)");
+        }
+        $list = $list->order('hot', 'desc')->paginate($limit);
+        return $this->success('ok', $list);
+    }
+
+    function getFolder(): \think\response\Json
+    {
+        return $this->success("ok", LinkFolderModel::order("sort","desc")->select());
     }
 
     private function update(): \think\response\Json
@@ -79,6 +104,36 @@ class LinkStore extends BaseController
             return $this->success('ok');
         }
         return $this->error('fail');
+    }
+
+    function createFolder(): \think\response\Json
+    {
+        $type = $this->request->post('type', false);
+        $this->getAdmin();
+        if ($type === 'edit') {
+            $form = $this->request->post('info');
+            $id = $this->request->post('info.id', false);
+            if ($id && $id > 0) {
+                $model = LinkFolderModel::find($id);
+                $model->update($form);
+            } else {
+                $model = new LinkFolderModel();
+                $model->insert($form);
+            }
+
+        } else if ($type === 'del') {
+            $id = $this->request->post('id');
+            $result = LinkFolderModel::where("id", $id)->find();
+            if ($result) {
+                $result->delete();
+                Db::query(
+                    "UPDATE linkstore
+                     SET area = TRIM(BOTH ',' FROM REPLACE(CONCAT(',', area, ','), ',$id,', ','))
+                     WHERE FIND_IN_SET('$id', area) > 0;"
+                );
+            }
+        }
+        return $this->success('处理完毕！');
     }
 
     public function del(): \think\response\Json

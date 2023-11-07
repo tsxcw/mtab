@@ -31,10 +31,54 @@ Mtab书签的界面设计美观简洁，操作简单直观，让你可以专注�
 
 # Mtab安装教程
 
+## 注意本文档基于宝塔面板的环境下进行编写
+
 **准备环境 Linux系统+php7.4+mysql8(mysql5.7也行，支持json就行)+Nginx+Redis;**
 
-php请安装**redis,fileinfo**扩展，然后并且解除一些禁用函数（宝塔默认禁用了一些函数）
-
+php请安装**redis,fileinfo,zip,curl,mysqli,json,json**等常用的扩展，然后并且解除一些禁用函数（宝塔默认禁用了一些函数）
+常用的扩展如下，一般来说安装php除了上述几个，一下的都是有的，需要去php.ini去解除
+```
+Core
+ctype
+curl
+date
+dom
+exif
+fileinfo
+filter
+gd
+gmp
+hash
+iconv
+igbinary
+imagick
+json
+libxml
+mbstring
+mysqli
+mysqlnd
+openssl
+pcntl
+pcre
+PDO
+pdo_mysql
+pdo_sqlite
+Phar
+posix
+readline
+redis
+Reflection
+session
+SPL
+sqlite3
+standard
+xml
+xmlreader
+xmlrpc
+xmlwriter
+zip
+zlib
+```
 需要解除的函数具体如下
 
 `shell_exec,putenv`
@@ -56,7 +100,7 @@ location ~^/ {
 ```
 4，然后配置好域名或者通过你自己的服务器的ip访问网站，不出意外会出现安装 页面，填写好一些基础的配置信息安装即可。（填写配置信息的是后请确保数据库账户和redis相关信息正确）
 
-5，安装完成后即可舒心访问网站，可通过登录安装时填写的账户登录网站进入后台
+5，安装完成后即可访问网站，可通过登录安装时填写的账户登录网站进入后台
 
 
 宝塔一键部署方式(预计国庆假期结束后一周左右上线)
