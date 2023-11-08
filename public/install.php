@@ -19,9 +19,20 @@ if (extension_loaded('redis')) {
     $redis_ext = true;
 }
 $fileinfo_ext = false;
-
 if (extension_loaded('fileinfo')) {
     $fileinfo_ext = true;
+}
+$zip_ext = false;
+if (extension_loaded('zip')) {
+    $zip_ext = true;
+}
+$mysqli_ext = false;
+if (extension_loaded('mysqli')) {
+    $mysqli_ext = true;
+}
+$curl_ext = false;
+if (extension_loaded('curl')) {
+    $curl_ext = true;
 }
 // 连接数据库
 $servername = 'localhost';
@@ -29,7 +40,7 @@ $db_username = params('db_username', false);
 $db_password = params('db_password', false);
 $db_host = params('db_host', '127.0.0.1');
 $db_port = params('db_port', 3306);
-$table_name = params('table_name', 'mtab');
+$table_name = params('table_name', '');
 $admin_email = params('admin_email', '');
 $admin_password = params('admin_password', '');
 $database_type = params('database_type', 1);//1=全新安装，2=使用已存在数据库不安装数据库
@@ -39,7 +50,7 @@ $redis_password = params('redis_password', '');
 $error = false;
 $conn = null;
 $status = false;
-if ($db_username && $php_version && $redis_ext && $fileinfo_ext) {
+if ($db_username && $php_version && $redis_ext && $fileinfo_ext && $curl_ext && $zip_ext) {
     $conn = new mysqli($db_host, $db_username, $db_password, null, $db_port);
     if ($conn->connect_error) {
         $error = '数据库连接失败';
@@ -213,8 +224,8 @@ EOF;
     <?php } ?>
     <h1 style="text-align: center;color: #fff">MTAB书签安装程序</h1>
     <form method='post' action='install.php'>
-        <div style="margin-bottom: 30px">
-            <b style="margin-right: 40px">请检查并安装以下php扩展:</b>
+        <div style="font-size: 25px;font-weight: bold;margin-bottom: 15px;">请检查并安装以下php扩展</div>
+        <div style="margin-bottom: 30px;display: flex;flex-wrap: wrap;gap:15px 40px;">
             <b>
                 php版本大于7.4
                 <?php if ($php_version) { ?>
@@ -223,7 +234,7 @@ EOF;
                     <span style='color: red'>✘</span>
                 <?php } ?>
             </b>
-            <b style="margin-left: 50px">
+            <b>
                 redis扩展
                 <?php if ($redis_ext) { ?>
                     <span style='color: limegreen'>✔</span>
@@ -231,7 +242,7 @@ EOF;
                     <span style='color: red'>✘</span>
                 <?php } ?>
             </b>
-            <b style='margin-left: 50px'>
+            <b>
                 fileinfo扩展
                 <?php if ($fileinfo_ext) { ?>
                     <span style='color: limegreen'>✔</span>
@@ -239,23 +250,48 @@ EOF;
                     <span style='color: red'>✘</span>
                 <?php } ?>
             </b>
+            <b>
+                zip扩展
+                <?php if ($zip_ext) { ?>
+                    <span style='color: limegreen'>✔</span>
+                <?php } else { ?>
+                    <span style='color: red'>✘</span>
+                <?php } ?>
+            </b>
+            <b>
+                curl扩展
+                <?php if ($curl_ext) { ?>
+                    <span style='color: limegreen'>✔</span>
+                <?php } else { ?>
+                    <span style='color: red'>✘</span>
+                <?php } ?>
+            </b>
+            <b>
+                mysqli扩展
+                <?php if ($mysqli_ext) { ?>
+                    <span style='color: limegreen'>✔</span>
+                <?php } else { ?>
+                    <span style='color: red'>✘</span>
+                <?php } ?>
+            </b>
         </div>
-        <label for='db_host'>数据库地址:</label>
+        <label for='db_host'>mysql数据库地址:</label>
         <input value="<?php echo $db_host; ?>" placeholder="127.0.0.1" type='text' name='db_host' id='db_host' required><br>
-        <label for='db_port'>数据库端口号:</label>
+        <label for='db_port'>mysql数据库端口号:</label>
         <input type='number' value="<?php echo $db_port; ?>" placeholder='默认 3306' name='db_port' id='db_port'
                required><br>
-        <label for='db_username'>数据库用户名:</label>
+        <label for='db_username'>mysql数据库用户名:</label>
         <input type='text' placeholder="请输入数据库用户名" value="<?php echo $db_username; ?>" name='db_username'
                id='db_username' required><br>
-        <label for='db_password'>数据库密码:</label>
+        <label for='db_password'>mysql数据库密码:</label>
         <input type='text' name='db_password' value="<?php echo $db_password; ?>" placeholder="请输入数据库密码"
                id='db_password' required><br>
-        <label for='table_name'>数据表名称:</label>
-        <input type='text' value="<?php echo $table_name; ?>" name='table_name' id='table_name' required><br>
+        <label for='table_name'>mysql数据表名称:</label>
+        <input type='text' value="<?php echo $table_name; ?>" placeholder="请输入创建的数据库名称" name='table_name'
+               id='table_name' required><br>
 
         <label for='redis_host'>Redis 地址:</label>
-        <input type='text' value="<?php echo $redis_host; ?>" name='redis_host' id='redis_host'><br>
+        <input type='text' value="<?php echo $redis_host; ?>" placeholder="请输入Redis地址IP/域名" name='redis_host' id='redis_host'><br>
         <label for='redis_password'>Redis 密码:</label>
         <input type='text' value="<?php echo $redis_password; ?>" name='redis_password' placeholder="没有密码请留空"
                id='redis_password'><br>
@@ -264,7 +300,8 @@ EOF;
                id='redis_port'
                required><br>
         <label for='redis_port'>管理员邮箱账号:</label>
-        <input type='text' value="<?php echo $admin_email; ?>" placeholder='请输入邮箱' name='admin_email'
+        <input type='text' value="<?php echo $admin_email; ?>" placeholder='请输入邮箱,用于默认的管理员账号登录使用'
+               name='admin_email'
                id='redis_port'
                required><br>
         <label for='redis_port'>管理员密码:</label>
