@@ -18,7 +18,7 @@ class Note extends BaseController
         if (!$user) {
             return $this->success('', []);
         }
-        $data = (new \app\model\NoteModel)->where("user_id", $user['user_id'])->field('user_id,id,title,create_time,update_time')->order('id', $sort)->limit($limit)->select();
+        $data = (new \app\model\NoteModel)->where("user_id", $user['user_id'])->field('user_id,id,title,create_time,update_time,weight')->order('id', $sort)->limit($limit)->select();
         return $this->success('ok', $data);
     }
 
@@ -33,6 +33,21 @@ class Note extends BaseController
         } catch (Exception $e) {
             return response('');
         }
+    }
+
+    function setWeight(): \think\response\Json
+    {
+        $user = $this->getUser(true);
+        $weight = $this->request->post('weight', 0);
+        $id = $this->request->post('id', false);
+        if ($id) {
+            $data = array(
+                'weight' => $weight,
+                'update_time' => date('Y-m-d H:i:s'),
+            );
+            (new \app\model\NoteModel)->where('id', $id)->where('user_id', $user['user_id'])->update($data);
+        }
+        return $this->success("ok");
     }
 
     //删除
@@ -58,6 +73,7 @@ class Note extends BaseController
             "user_id" => $user['user_id'],
             "text" => $text,
             "title" => $title,
+            'weight' => $this->request->post("weight", 0),
             "create_time" => date("Y-m-d H:i:s"),
             "update_time" => date("Y-m-d H:i:s"),
         );
@@ -80,9 +96,9 @@ class Note extends BaseController
         $title = $this->request->post('title', '');
         $text = $this->request->post('text', '');
         $data = array(
-            "user_id" => $user['user_id'],
             "text" => $text,
             "title" => $title,
+            'weight' => $this->request->post('weight', 0),
             "update_time" => date("Y-m-d H:i:s"),
         );
         $status = (new \app\model\NoteModel)->where("id", $id)->where('user_id', $user['user_id'])->update($data);
