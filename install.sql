@@ -21,20 +21,29 @@ create table link
     link    json null
 );
 
+create table link_folder
+(
+    id   int auto_increment comment 'id'
+        primary key,
+    name varchar(50)   null comment '分类名称',
+    sort int default 0 null
+)
+    comment '标签链接分类';
+
 create table linkstore
 (
     id          int auto_increment
         primary key,
-    name        varchar(20)                null,
+    name        varchar(255)               null,
     src         varchar(255)               null,
     url         varchar(255)               null,
     type        varchar(20) default 'icon' null,
     size        varchar(20) default '1x1'  null,
     create_time datetime                   null,
     hot         bigint      default 0      null,
-    area        varchar(20) default '' null comment '专区',
-    tips        varchar(30)                null comment '介绍',
-    domain      varchar(100)               null,
+    area        varchar(20) default ''     null comment '专区',
+    tips        varchar(255)               null comment '介绍',
+    domain      varchar(255)               null,
     app         int         default 0      null comment '是否app',
     install_num int         default 0      null comment '安装量',
     constraint linkStore_id_uindex
@@ -45,11 +54,12 @@ create table note
 (
     id          bigint auto_increment
         primary key,
-    user_id     bigint      null,
-    title       varchar(50) null,
-    text        text        null,
-    create_time datetime    null,
-    update_time datetime    null,
+    user_id     bigint        null,
+    title       varchar(50)   null,
+    text        text          null,
+    create_time datetime      null,
+    update_time datetime      null,
+    weight      int default 0 null,
     constraint note_id_uindex
         unique (id)
 );
@@ -101,16 +111,6 @@ create table user
     constraint user_mail_uindex
         unique (mail)
 );
-
-
-create table link_folder
-(
-    id   int auto_increment comment 'id'
-        primary key,
-    name varchar(50)   null comment '分类名称',
-    sort int default 0 null
-)
-    comment '标签链接分类';
 
 
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('Bilibili', '/static/bilibili.png', 'https://bilibili.com', 'icon', '1x1', '2022-11-07 21:51:42', 0, 'Bilibili弹幕视频网站Acg网站', 'bilibili.com,www.bilibili.com', 0, 0);

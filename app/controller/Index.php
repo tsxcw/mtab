@@ -4,8 +4,7 @@ namespace app\controller;
 
 use app\BaseController;
 use app\model\SettingModel;
-use GuzzleHttp\Exception\GuzzleException;
-use think\exception\ErrorException;
+use DateTime;
 use think\facade\Cache;
 use think\facade\View;
 use think\Request;

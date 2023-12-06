@@ -9,6 +9,7 @@ use app\model\UserModel;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use think\facade\Cache;
 use think\facade\Db;
 
 //use Upgrade;
@@ -31,7 +32,7 @@ class Index extends BaseController
     private function initAuth()
     {
         $authCode = $this->Setting('authCode', '', true);
-        if(strlen($authCode)==0){
+        if (strlen($authCode) == 0) {
             $authCode = env('authCode', '');
         }
         $this->authCode = $authCode;
@@ -117,12 +118,45 @@ class Index extends BaseController
         }
     }
 
+    function countFilesInDirectory($directory): int
+    {
+        $fileCount = 0;
+
+        // 获取目录中的文件和子目录
+        $files = scandir($directory);
+
+        foreach ($files as $file) {
+            // 排除"."和".."
+            if ($file != '.' && $file != '..') {
+                $filePath = $directory . '/' . $file;
+
+                // 如果是目录，则递归调用函数
+                if (is_dir($filePath)) {
+                    $fileCount += $this->countFilesInDirectory($filePath);
+                } else {
+                    // 如果是文件，则增加文件数量
+                    $fileCount++;
+                }
+            }
+        }
+
+        return $fileCount;
+    }
+
     function getServicesStatus(): \think\response\Json
     {
         $this->getAdmin();
-        $info['memory'] = \NetworkSpeedMonitor::getMemoryUsage();
-        $info['disk'] = \NetworkSpeedMonitor::getDiskData();
-        return $this->success("ok", $info);
+        $userNum = UserModel::count("id");
+        $linkNum = LinkStoreModel::count("id");
+        $redisNum = Cache::handler()->dbSize();
+        $fileNum = Cache::get("fileNum");
+        if(!$fileNum){
+            if (is_dir(public_path() . 'images')) {
+                $fileNum = $this->countFilesInDirectory(public_path() . 'images');
+                Cache::set('fileNum', $fileNum, 300);
+            }
+        }
+        return $this->success("ok", ["userNum" => $userNum, "linkNum" => $linkNum, "redisNum" => $redisNum, "fileNum" => $fileNum]);
     }
 
     function getUserLine(): \think\response\Json

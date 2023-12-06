@@ -28,7 +28,6 @@
     "guzzlehttp/guzzle": "^7.7",
     "ext-openssl": "*",
     "nette/mail": "^3.1",
-    "obs/esdk-obs-php": "^3.22",
     "ext-fileinfo": "*",
     "paquettg/php-html-parser": "^3.1",
     "topthink/think-filesystem": "^2.0",
