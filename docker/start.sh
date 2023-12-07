@@ -22,7 +22,7 @@ chmod -R 777 "$destination_dir"
 if [ ! -e "$lock_file" ]; then
     # 如果锁文件不存在，执行移动操作
     rsync -aL "$source_dir/" "$destination_dir"
-
+    chmod -R 777 "$destination_dir"
     # 创建锁文件
     touch "$lock_file"
     rm -rf "$source_dir";
