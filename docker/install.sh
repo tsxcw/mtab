@@ -20,7 +20,7 @@ mkdir /run/nginx
 mv /default.conf /etc/nginx/http.d/default.conf
 mv /www.conf /etc/php7/php-fpm.d/www.conf
 mv /php.ini /etc/php7/php.ini
-
+mv /nginx.conf /etc/nginx/nginx.conf
 
 # 检查是否存在 .git 目录
 if [ -d "/www/.git" ]; then

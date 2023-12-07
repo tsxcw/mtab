@@ -6,7 +6,7 @@ WORKDIR /
 
 COPY ./docker/install.sh /install.sh
 COPY ./docker/start.sh /start.sh
-
+COPY ./docker/nginx.conf /nginx.conf
 COPY ./docker/default.conf /default.conf
 COPY ./docker/www.conf /www.conf
 COPY ./docker/redis.conf /opt/redis.conf

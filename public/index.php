@@ -10,8 +10,8 @@
 // +----------------------------------------------------------------------
 // [ 应用入口文件 ]
 namespace think;
-define('app_version', '1.2.2');
-define('app_version_code', 22);
+define('app_version', '1.2.3');
+define('app_version_code', 23);
 require __DIR__ . '/../vendor/autoload.php';
 
 // 执行HTTP应用并响应
