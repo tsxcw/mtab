@@ -148,7 +148,7 @@ class Index extends BaseController
         $this->getAdmin();
         $userNum = UserModel::count("id");
         $linkNum = LinkStoreModel::count("id");
-        $redisNum = Cache::handler()->dbSize();
+        $redisNum = 0;
         $fileNum = Cache::get("fileNum");
         if(!$fileNum){
             if (is_dir(public_path() . 'images')) {

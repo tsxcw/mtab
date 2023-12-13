@@ -102,7 +102,7 @@ class BaseController
         $token = $this->request->header("Token", '');
         if ($id && $token) {
             if ($this->user_temp) return $this->user_temp;
-            $user = TokenModel::where("user_id", $id)->where('token', $token)->field("user_id,token,create_time")->cache('user.' . $id, 300)->find();
+            $user = TokenModel::where("user_id", $id)->where('token', $token)->field("user_id,token,create_time")->cache('user.' . $id, 3600)->find();
             if ($user) {
                 if ((time() - $user['create_time']) > (864000)) { //token定时15天清理一次，10-15天内如果使用了则重新计算时间
                     $user->create_time = time();
