@@ -1,0 +1,1 @@
+import{_ as e,c as r,d as a}from"./index.1702580971041.js";const n={class:"manager-webApp bg-white p-4 rounded-lg flex"};var s=e({},[["render",function(e,s){return r(),a("div",n)}]]);export{s as default};

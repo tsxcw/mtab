@@ -171,7 +171,7 @@ class Index extends BaseController
     function getHotTab(): \think\response\Json
     {
         $this->getAdmin();
-        $list = LinkStoreModel::order('install_num', 'desc')->limit(20)->cache('hotTab', 60)->select()->toArray();
+        $list = LinkStoreModel::order('install_num', 'desc')->limit(30)->cache('hotTab', 60)->select()->toArray();
         return $this->success('ok', $list);
     }
 
