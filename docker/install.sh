@@ -23,16 +23,16 @@ mv /php.ini /etc/php7/php.ini
 mv /nginx.conf /etc/nginx/nginx.conf
 
 # 检查是否存在 .git 目录
-if [ -d "/www/.git" ]; then
+if [ -d "/www/.git" ];then
     rm -rf "/www/.git"
 fi
 
 # 检查是否存在 .ide 目录
-if [ -d "/www/.idea" ]; then
+if [ -d "/www/.idea" ];then
     rm -rf "/www/.idea"
 fi
 
-if [ -d "/www/vendor/bin/" ]; then
+if [ -d "/www/vendor/bin/" ];then
     rm -rf "/www/vendor/bin/"
 fi
 

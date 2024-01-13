@@ -26,6 +26,10 @@ class ComposerStaticInit9940d4d99a4d1020baa0db98e4f44a0e
             'think\\trace\\' => 12,
             'think\\' => 6,
         ),
+        'p' => 
+        array (
+            'plugins\\' => 8,
+        ),
         'a' => 
         array (
             'app\\' => 4,
@@ -84,6 +88,10 @@ class ComposerStaticInit9940d4d99a4d1020baa0db98e4f44a0e
             2 => __DIR__ . '/..' . '/topthink/think-helper/src',
             3 => __DIR__ . '/..' . '/topthink/think-orm/src',
             4 => __DIR__ . '/..' . '/topthink/think-template/src',
+        ),
+        'plugins\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/plugins',
         ),
         'app\\' => 
         array (

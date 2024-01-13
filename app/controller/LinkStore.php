@@ -9,6 +9,7 @@ use think\facade\Db;
 
 class LinkStore extends BaseController
 {
+
     public function list(): \think\response\Json
     {
         $limit = $this->request->post('limit', 15);
@@ -53,6 +54,7 @@ class LinkStore extends BaseController
 
     private function update(): \think\response\Json
     {
+        is_demo_mode(true);
         $data = $this->request->post("form");
         $info = LinkStoreModel::where("id", $data['id'])->update($data);
         return $this->success('修改成功', $info);
@@ -61,6 +63,7 @@ class LinkStore extends BaseController
     public function add(): \think\response\Json
     {
         $admin = $this->getAdmin();
+        is_demo_mode(true);
         $data = $this->request->post('form');
         if ($data) {
             if (isset($data['id']) && $data['id']) { //更新
@@ -77,7 +80,6 @@ class LinkStore extends BaseController
     public function getIcon(): \think\response\Json
     {
         $url = $this->request->post('url', false);
-
         if ($url) {
             if (mb_substr($url, 0, 4) == 'tab:') {
             } else {
@@ -108,6 +110,7 @@ class LinkStore extends BaseController
 
     function createFolder(): \think\response\Json
     {
+        is_demo_mode(true);
         $type = $this->request->post('type', false);
         $this->getAdmin();
         if ($type === 'edit') {
@@ -138,6 +141,7 @@ class LinkStore extends BaseController
 
     public function del(): \think\response\Json
     {
+        is_demo_mode(true);
         $this->getAdmin();
         $ids = $this->request->post('ids', []);
         LinkStoreModel::where("id", 'in', $ids)->delete();

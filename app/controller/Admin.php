@@ -23,6 +23,7 @@ class Admin extends BaseController
     function userUpdate(): \think\response\Json
     {
         $this->getAdmin();
+        is_demo_mode(true);
         $id = $this->request->post('id');
         $user = UserModel::where('id', $id)->find();
         $data = $this->request->post();
@@ -36,6 +37,6 @@ class Admin extends BaseController
             unset($data['password']);
         }
         $user->save($data);
-        return $this->success('ok');
+        return $this->success('修改成功');
     }
 }

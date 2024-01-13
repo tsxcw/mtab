@@ -1,1 +1,280 @@
-{"link":[{"sort":0,"id":"EA3D2091-3C2E-4F6B-83BE-0609B5F16024","name":"阿里云","size":"1x1","src":"/static/aliyun.png","url":"https://www.aliyun.com/","type":"icon","app":0,"pid":"72246EC7-57BD-49FA-8E2B-AD6C3981A297"},{"id":"45154338-89c4-41b1-ae9f-4508078f4c7b","name":"Mtab书签","src":"/static/mtab.png","url":"https://mtab.cc","size":"1x1","type":"icon","sort":0,"app":0,"pid":null},{"id":"f730b603-6514-414a-8165-7d5a679e12db","pid":null,"src":"/static/itbk.png","url":"https://blog.mtab.cc/","name":"IT博客","size":"1x1","sort":1,"type":"icon"},{"sort":1,"id":"D3AB9DDF-EB1A-47AD-B9B5-824A367C7A61","name":"华为云","size":"1x1","src":"/static/huawei.png","url":"https://www.huaweicloud.com/","type":"icon","app":0,"pid":"72246EC7-57BD-49FA-8E2B-AD6C3981A297"},{"sort":2,"id":"5C3099FE-4A6E-4DA9-85B2-F20E1205347C","name":"GitHub","size":"1x1","src":"/static/github.png","url":"https://github.com/","type":"icon","app":0,"pid":null},{"sort":2,"id":"E0F115F4-B6E4-46A2-92CE-FF49329EF0E1","name":"蓝易云","size":"1x1","src":"/static/tsy.png","url":"https://www.tsyvps.com/aff/IRYIGFMX","type":"icon","app":0,"pid":"72246EC7-57BD-49FA-8E2B-AD6C3981A297"},{"sort":3,"id":"C4E35210-C3CB-44DB-9D32-96FDA9116EB1","name":"微博","size":"1x1","src":"/static/weibo.png","url":"http://weibo.com/","type":"icon","app":0,"pid":null},{"sort":3,"id":"E97A6A65-6744-40F5-B097-44BBCB68FA86","name":"腾讯云","size":"1x1","src":"/static/tencentcloud.png","url":"https://cloud.tencent.com/","type":"icon","app":0,"pid":"72246EC7-57BD-49FA-8E2B-AD6C3981A297"},{"sort":4,"id":"679EFDC3-1A8F-473C-94B1-DE94C3C4C561","name":"腾讯视频","size":"1x1","src":"/static/txsp.png","url":"https://v.qq.com/channel/choice?channel_2022=1","type":"icon","app":0,"pid":null},{"id":"72246EC7-57BD-49FA-8E2B-AD6C3981A297","size":"1x1","component":"iconGroup","name":"云服务器","type":"component","url":"iconGroup","children":[],"sort":5,"pid":null},{"sort":6,"id":"983BA64F-D710-46B5-B3B9-8AC1C37C3A5E","name":"Bilibili","size":"1x1","src":"/static/bilibili.png","url":"https://bilibili.com","type":"icon","app":0,"pid":null},{"id":"59b26cd5-de4e-42c0-b065-2d4ff74447c6","name":"OneNav导航","src":"/static/onenav.png","url":"https://www.onenav.top/","size":"1x1","type":"icon","sort":7,"app":0,"pid":null},{"sort":8,"id":"F743D0A2-49BE-42BF-8CC1-EE98FFD20B48","name":"ImgUrl图床","size":"1x1","src":"/static/imgurl.png","url":"https://imgurl.ink","type":"icon","app":0,"pid":null},{"sort":9,"id":"4F9137E3-5701-4F6F-A8F4-C3F131FD9429","name":"火山翻译","size":"1x1","src":"/static/huoshanfanyi.png","url":"https://translate.volcengine.com/translate","type":"icon","app":1,"pid":null},{"sort":10,"id":"9589E037-8EE3-4B1C-95E8-F419E9187357","name":"记事本","size":"1x1","src":"/static/note.png","url":"/noteApp","type":"icon","app":1,"pid":null},{"id":"C6057D42-2BAA-402D-8508-C8E2B9454DB0","app":0,"pid":null,"src":"/static/editAll.png","url":"tab://editAll","name":"批量编辑","size":"1x1","sort":11,"type":"icon"},{"sort":12,"id":"9F256401-0FF9-4DCE-980E-082F1C4DA118","name":"添加标签","size":"1x1","src":"/static/addIco.png","url":"tab://addicon","type":"icon","app":0,"pid":null},{"id":"033E9038-B97C-4894-83D2-6E030FAB83C6","app":0,"pid":null,"src":"/static/setting.png","url":"tab://setting","name":"设置","size":"1x1","sort":13,"type":"icon"}],"tabbar":[{"id":"45154338-89c4-41b1-ae9f-4508078f4c7b","name":"Mtab书签","src":"/static/mtab.png","url":"https://mtab.cc","size":"1x1","type":"icon","sort":0,"app":0,"pid":null},{"sort":4,"id":"4F9137E3-5701-4F6F-A8F4-C3F131FD9429","name":"火山翻译","size":"1x1","src":"/static/huoshanfanyi.png","url":"https://translate.volcengine.com/translate","type":"icon","app":1,"pid":null},{"sort":5,"id":"9589E037-8EE3-4B1C-95E8-F419E9187357","name":"记事本","size":"1x1","src":"/static/note.png","url":"/noteApp","type":"icon","app":1,"pid":null},{"sort":1,"id":"D3AB9DDF-EB1A-47AD-B9B5-824A367C7A61","name":"华为云","size":"1x1","src":"/static/huawei.png","url":"https://www.huaweicloud.com/","type":"icon","app":0,"pid":null},{"id":"72246EC7-57BD-49FA-8E2B-AD6C3981A297","size":"1x1","component":"iconGroup","name":"云服务器","type":"component","url":"iconGroup","children":[],"sort":4,"pid":null},{"sort":2,"id":"5C3099FE-4A6E-4DA9-85B2-F20E1205347C","name":"GitHub","size":"1x1","src":"/static/github.png","url":"https://github.com/","type":"icon","app":0,"pid":null},{"sort":3,"id":"C4E35210-C3CB-44DB-9D32-96FDA9116EB1","name":"微博","size":"1x1","src":"/static/weibo.png","url":"http://weibo.com/","type":"icon","app":0,"pid":null},{"id":"033E9038-B97C-4894-83D2-6E030FAB83C6","app":0,"pid":null,"src":"/static/setting.png","url":"tab://setting","name":"设置","size":"1x1","sort":8,"type":"icon"}]}
+{
+  "link": [
+    {
+      "sort": 0,
+      "id": "EA3D2091-3C2E-4F6B-83BE-0609B5F16024",
+      "name": "阿里云",
+      "size": "1x1",
+      "src": "/static/aliyun.png",
+      "url": "https://www.aliyun.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": "72246EC7-57BD-49FA-8E2B-AD6C3981A297"
+    },
+    {
+      "id": "45154338-89c4-41b1-ae9f-4508078f4c7b",
+      "name": "Mtab书签",
+      "src": "/static/mtab.png",
+      "url": "https://mtab.cc",
+      "size": "1x1",
+      "type": "icon",
+      "sort": 0,
+      "app": 0,
+      "pid": null
+    },
+    {
+      "id": "f730b603-6514-414a-8165-7d5a679e12db",
+      "pid": null,
+      "src": "/static/mcecy.png",
+      "url": "https://blog.mcecy.com/",
+      "name": "IT博客",
+      "size": "1x1",
+      "sort": 1,
+      "type": "icon"
+    },
+    {
+      "sort": 1,
+      "id": "D3AB9DDF-EB1A-47AD-B9B5-824A367C7A61",
+      "name": "华为云",
+      "size": "1x1",
+      "src": "/static/huawei.png",
+      "url": "https://www.huaweicloud.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": "72246EC7-57BD-49FA-8E2B-AD6C3981A297"
+    },
+    {
+      "sort": 2,
+      "id": "5C3099FE-4A6E-4DA9-85B2-F20E1205347C",
+      "name": "GitHub",
+      "size": "1x1",
+      "src": "/static/github.png",
+      "url": "https://github.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 3,
+      "id": "C4E35210-C3CB-44DB-9D32-96FDA9116EB1",
+      "name": "微博",
+      "size": "1x1",
+      "src": "/static/weibo.png",
+      "url": "http://weibo.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 3,
+      "id": "E97A6A65-6744-40F5-B097-44BBCB68FA86",
+      "name": "腾讯云",
+      "size": "1x1",
+      "src": "/static/tencentcloud.png",
+      "url": "https://cloud.tencent.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": "72246EC7-57BD-49FA-8E2B-AD6C3981A297"
+    },
+    {
+      "sort": 4,
+      "id": "679EFDC3-1A8F-473C-94B1-DE94C3C4C561",
+      "name": "腾讯视频",
+      "size": "1x1",
+      "src": "/static/txsp.png",
+      "url": "https://v.qq.com/channel/choice?channel_2022=1",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 5,
+      "id": "E0F115F4-B6E4-46A2-92CE-FF49329EF0E1",
+      "name": "蓝易云",
+      "size": "1x1",
+      "src": "/static/tsy.png",
+      "url": "https://www.tsyvps.com/aff/IRYIGFMX",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "id": "72246EC7-57BD-49FA-8E2B-AD6C3981A297",
+      "size": "1x1",
+      "component": "iconGroup",
+      "name": "云服务器",
+      "type": "component",
+      "url": "iconGroup",
+      "children": [],
+      "sort": 6,
+      "pid": null
+    },
+    {
+      "sort": 7,
+      "id": "983BA64F-D710-46B5-B3B9-8AC1C37C3A5E",
+      "name": "Bilibili",
+      "size": "1x1",
+      "src": "/static/bilibili.png",
+      "url": "https://bilibili.com",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 9,
+      "id": "F743D0A2-49BE-42BF-8CC1-EE98FFD20B48",
+      "name": "ImgUrl图床",
+      "size": "1x1",
+      "src": "/static/imgurl.png",
+      "url": "https://imgurl.ink",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 10,
+      "id": "4F9137E3-5701-4F6F-A8F4-C3F131FD9429",
+      "name": "火山翻译",
+      "size": "1x1",
+      "src": "/static/huoshanfanyi.png",
+      "url": "https://translate.volcengine.com/translate",
+      "type": "icon",
+      "app": 1,
+      "pid": null
+    },
+    {
+      "sort": 11,
+      "id": "9589E037-8EE3-4B1C-95E8-F419E9187357",
+      "name": "记事本",
+      "size": "1x1",
+      "src": "/static/note.png",
+      "url": "/noteApp",
+      "type": "icon",
+      "app": 1,
+      "pid": null
+    },
+    {
+      "id": "C6057D42-2BAA-402D-8508-C8E2B9454DB0",
+      "app": 0,
+      "pid": null,
+      "src": "/static/editAll.png",
+      "url": "tab://editAll",
+      "name": "批量编辑",
+      "size": "1x1",
+      "sort": 12,
+      "type": "icon"
+    },
+    {
+      "sort": 13,
+      "id": "9F256401-0FF9-4DCE-980E-082F1C4DA118",
+      "name": "添加标签",
+      "size": "1x1",
+      "src": "/static/addIco.png",
+      "url": "tab://addicon",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "id": "033E9038-B97C-4894-83D2-6E030FAB83C6",
+      "app": 0,
+      "pid": null,
+      "src": "/static/setting.png",
+      "url": "tab://setting",
+      "name": "设置",
+      "size": "1x1",
+      "sort": 14,
+      "type": "icon"
+    }
+  ],
+  "tabbar": [
+    {
+      "id": "45154338-89c4-41b1-ae9f-4508078f4c7b",
+      "name": "Mtab书签",
+      "src": "/static/mtab.png",
+      "url": "https://mtab.cc",
+      "size": "1x1",
+      "type": "icon",
+      "sort": 0,
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 4,
+      "id": "4F9137E3-5701-4F6F-A8F4-C3F131FD9429",
+      "name": "火山翻译",
+      "size": "1x1",
+      "src": "/static/huoshanfanyi.png",
+      "url": "https://translate.volcengine.com/translate",
+      "type": "icon",
+      "app": 1,
+      "pid": null
+    },
+    {
+      "sort": 5,
+      "id": "9589E037-8EE3-4B1C-95E8-F419E9187357",
+      "name": "记事本",
+      "size": "1x1",
+      "src": "/static/note.png",
+      "url": "/noteApp",
+      "type": "icon",
+      "app": 1,
+      "pid": null
+    },
+    {
+      "sort": 1,
+      "id": "D3AB9DDF-EB1A-47AD-B9B5-824A367C7A61",
+      "name": "华为云",
+      "size": "1x1",
+      "src": "/static/huawei.png",
+      "url": "https://www.huaweicloud.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "id": "72246EC7-57BD-49FA-8E2B-AD6C3981A297",
+      "size": "1x1",
+      "component": "iconGroup",
+      "name": "云服务器",
+      "type": "component",
+      "url": "iconGroup",
+      "children": [],
+      "sort": 4,
+      "pid": null
+    },
+    {
+      "sort": 2,
+      "id": "5C3099FE-4A6E-4DA9-85B2-F20E1205347C",
+      "name": "GitHub",
+      "size": "1x1",
+      "src": "/static/github.png",
+      "url": "https://github.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "sort": 3,
+      "id": "C4E35210-C3CB-44DB-9D32-96FDA9116EB1",
+      "name": "微博",
+      "size": "1x1",
+      "src": "/static/weibo.png",
+      "url": "http://weibo.com/",
+      "type": "icon",
+      "app": 0,
+      "pid": null
+    },
+    {
+      "id": "033E9038-B97C-4894-83D2-6E030FAB83C6",
+      "app": 0,
+      "pid": null,
+      "src": "/static/setting.png",
+      "url": "tab://setting",
+      "name": "设置",
+      "size": "1x1",
+      "sort": 8,
+      "type": "icon"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 <?php
 ini_set('max_execution_time', 0);
-
+ini_set('memory_limit', '500M');
 class Upgrade2
 {
     protected string $archiveFile = "";//升级文件地址

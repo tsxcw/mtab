@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\BaseController;
+use app\model\ConfigModel;
 use app\model\LinkModel;
 use app\model\SettingModel;
 use GuzzleHttp\Client;
@@ -16,9 +17,14 @@ class Api extends BaseController
 {
     public function site(): \think\response\Json
     {
+        $auth = false;
+        if ($this->Setting('authCode', env('authCode', false), true)) {
+            $auth = true;
+        }
         return $this->success("ok", [
             'email' => $this->Setting('email', ''),
-            "recordNumber" => $this->Setting("recordNumber", '')
+            "recordNumber" => $this->Setting("recordNumber", ''),
+            "auth" => $auth
         ]);
     }
 

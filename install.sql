@@ -112,6 +112,25 @@ create table user
         unique (mail)
 );
 
+create table card
+(
+    id          int auto_increment
+        primary key,
+    name        varchar(200)  null,
+    name_en     varchar(200)  null,
+    status      int default 0 null,
+    version     int default 0 null,
+    tips        varchar(255)  null comment '说明',
+    create_time datetime      null comment '添加时间',
+    src         text          null comment 'logo',
+    url         varchar(255)  null comment '卡片地址',
+    `window`    varchar(255)  null comment '窗口地址',
+    update_time datetime      null,
+    install_num int default 0 null
+)
+    comment '卡片数据表';
+
+
 
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('Bilibili', '/static/bilibili.png', 'https://bilibili.com', 'icon', '1x1', '2022-11-07 21:51:42', 0, 'Bilibili弹幕视频网站Acg网站', 'bilibili.com,www.bilibili.com', 0, 0);
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('蓝易云', '/static/tsy.png', 'https://www.tsyvps.com/aff/IRYIGFMX', 'icon', '1x1', '2022-11-07 22:02:41', 0, '蓝易云-持证高性价比服务器', 'www.tsyvps.com,tsyvps.com', 0, 0);

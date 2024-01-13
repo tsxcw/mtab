@@ -3,6 +3,7 @@
 namespace app\controller\admin;
 
 use app\BaseController;
+use app\model\CardModel;
 use app\model\LinkStoreModel;
 use app\model\SettingModel;
 use app\model\UserModel;
@@ -16,7 +17,7 @@ use think\facade\Db;
 
 class Index extends BaseController
 {
-    public string $authService = "http://auth.mtab.cc";
+    public string $authService = "https://auth.mtab.cc";
     public string $authCode = '';
 
     function setSubscription(): \think\response\Json
@@ -36,7 +37,7 @@ class Index extends BaseController
             $authCode = env('authCode', '');
         }
         $this->authCode = $authCode;
-        $this->authService = $this->Setting('authServer', 'http://auth.mtab.cc', true);
+        $this->authService = $this->Setting('authServer', 'https://auth.mtab.cc', true);
     }
 
     function updateApp(): \think\response\Json
@@ -150,7 +151,7 @@ class Index extends BaseController
         $linkNum = LinkStoreModel::count("id");
         $redisNum = 0;
         $fileNum = Cache::get("fileNum");
-        if(!$fileNum){
+        if (!$fileNum) {
             if (is_dir(public_path() . 'images')) {
                 $fileNum = $this->countFilesInDirectory(public_path() . 'images');
                 Cache::set('fileNum', $fileNum, 300);
@@ -207,5 +208,158 @@ class Index extends BaseController
             $total[] = isset($info[$end_date->format('Y-m-d')]) ? $info[$end_date->format('Y-m-d')] : 0;
         }
         return ['time' => $time, 'total' => $total, 'sum' => array_sum($total)];
+    }
+
+    function cardList(): \think\response\Json
+    {
+        $this->getAdmin();
+        $this->initAuth();
+        $result = \Axios::http()->post($this->authService . '/card', [
+            'timeout' => 15,
+            'form_params' => [
+                'authorization_code' => $this->authCode
+            ]
+        ]);
+        try {
+            $json = $result->getBody()->getContents();
+            $json = json_decode($json, true);
+            if ($json['code'] === 1) {
+                return $this->success('ok', $json['data']);
+            }
+        } catch (\Exception $e) {
+        }
+        return $this->error('远程卡片获取失败');
+    }
+
+    //获取本地应用
+    function localCard(): \think\response\Json
+    {
+        $this->getAdmin();
+        $apps = CardModel::select();
+        return $this->success('ok', $apps);
+    }
+
+    function stopCard(): \think\response\Json
+    {
+        $name_en = $this->request->post('name_en', '');
+        CardModel::where('name_en', $name_en)->update(['status' => 0]);
+        Cache::delete('cardList');
+        return $this->success('设置成功');
+    }
+
+    function startCard(): \think\response\Json
+    {
+        $name_en = $this->request->post('name_en', '');
+        CardModel::where('name_en', $name_en)->update(['status' => 1]);
+        Cache::delete('cardList');
+        return $this->success('设置成功');
+    }
+
+    function installCard(): \think\response\Json
+    {
+        $this->initAuth();
+        $name_en = $this->request->post("name_en", '');
+        $version = 0;
+        $type = $this->request->post('type', 'install');
+        if (mb_strlen($name_en) > 0) {
+            $card = CardModel::where('name_en', $name_en)->find();
+            if ($card) {
+                if ($type == 'install') {
+                    return $this->error('您已安装当前卡片组件');
+                }
+                if ($type == 'update') {
+                    $version = $card['version'];
+                }
+            }
+            $result = \Axios::http()->post($this->authService . '/installCard', [
+                'timeout' => 15,
+                'form_params' => [
+                    'authorization_code' => $this->authCode,
+                    'name_en' => $name_en,
+                    'version' => $version
+                ]
+            ]);
+            try {
+                $json = $result->getBody()->getContents();
+                $json = json_decode($json, true, JSON_UNESCAPED_UNICODE);
+                if ($json['code'] == 0) {
+                    return $this->error($json['msg']);
+                }
+                return $this->installCardTask($json['data']);
+            } catch (\Exception $e) {
+            }
+
+        }
+        return $this->error("没有需要安装的卡片插件！");
+    }
+
+    function uninstallCard(): \think\response\Json
+    {
+        $name_en = $this->request->post("name_en");
+        if ($name_en) {
+            $this->deleteDirectory(root_path() . 'plugins/' . $name_en);
+            CardModel::where('name_en', $name_en)->delete();
+            Cache::delete('cardList');
+        }
+        return $this->success('卸载完毕！');
+    }
+
+    function deleteDirectory($dir)
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if ($file != '.' && $file != '..') {
+                if (is_dir("$dir/$file")) {
+                    $this->deleteDirectory("$dir/$file");
+                } else {
+                    unlink("$dir/$file");
+                }
+            }
+        }
+        rmdir($dir);
+    }
+
+    protected function readCardInfo($name_en)
+    {
+        $file = root_path() . 'plugins/' . $name_en . '/info.json';
+        $info = file_get_contents($file);
+        try {
+            return json_decode($info, true);
+        } catch (\Exception $e) {
+        }
+        return false;
+    }
+
+    function installCardTask($info): \think\response\Json
+    {
+        if ($info['download']) {
+            $task = new \PluginsInstall($info);
+            $state = $task->run();
+            if ($state === true) {
+                $config = $this->readCardInfo($info['name_en']);
+                $data = [
+                    'name' => $config['name'],
+                    'name_en' => $config['name_en'],
+                    'version' => $config['version'],
+                    'tips' => $config['tips'],
+                    'src' => $config['src'],
+                    'url' => $config['url'],
+                    'window' => $config['window'],
+                ];
+                $find = CardModel::where('name_en', $info['name_en'])->find();
+                if ($find) {
+                    $find->force()->save($data);
+                } else {
+                    CardModel::create($data);
+                }
+                Cache::delete('cardList');
+                return $this->success("安装成功");
+            }
+            return $this->error($state);
+        }
+        return $this->error('新版本没有提供下载地址！');
     }
 }

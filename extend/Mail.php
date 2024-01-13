@@ -24,7 +24,6 @@ class Mail
         try {
             $mailer->send($mail);
         } catch (\Throwable $th) {
-            //throw $th;
             return false;
         }
         return true;

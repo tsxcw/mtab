@@ -14,6 +14,7 @@ class Setting extends BaseController
     function saveSetting(): \think\response\Json
     {
         $this->getAdmin();
+        is_demo_mode(true);
         $list = $this->request->post('form');
         $tmp = [];
         foreach ($list as $key => $value) {
@@ -23,9 +24,8 @@ class Setting extends BaseController
             ];
         }
         Db::table('setting')->replace()->insertAll($tmp);
-        $config = array_column($tmp, 'value', 'keys');
-        Cache::set('webConfig', $config, 300);
-        return $this->success('ok');
+        Cache::delete('webConfig');
+        return $this->success('保存成功');
     }
 
     function getSetting(): \think\response\Json

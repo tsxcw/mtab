@@ -14,17 +14,20 @@ class SettingModel extends Model
 {
     protected $name = "setting";
     protected $pk = "keys";
-    static $CacheConfig = false;
+    static array $CacheConfig = [];
+
+ 
 
     public static function Config($key = false, $default = '##')
     {
         $config = self::$CacheConfig;
-        if (!$config) {
+        if (count($config) == 0) {
             $config = Cache::get('webConfig');
             if (!$config) {
                 $config = self::select()->toArray();
                 $config = array_column($config, 'value', 'keys');
                 Cache::set('webConfig', $config, 300);
+                self::$CacheConfig = $config;
             }
         }
         if ($key) {

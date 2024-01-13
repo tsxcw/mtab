@@ -1,0 +1,54 @@
+/* 兼容所有浏览器，隐藏滚动条 */
+body {
+    scrollbar-width: none;
+    overflow: hidden;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+/* 针对WebKit浏览器（如Chrome、Safari等）添加以下样式 */
+::-webkit-scrollbar {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    display: none;
+}
+
+::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+::-webkit-scrollbar-corner {
+    display: none;
+}
+
+#think_page_trace {
+    display: none;
+}
+
+.f-1x1 {
+    display: none;
+}
+
+@media screen and (max-width: 200px) {
+    .f-2x2\:hidden {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 100px) {
+    .f-1x1\:hidden {
+        display: none !important;
+    }
+    .f-1x1 {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
