@@ -4,14 +4,20 @@ function params($key, $default_value = '')
     return $_POST[$key] ?? $default_value;
 }
 
+$run = true;
 if (file_exists('./installed.lock')) {//如果没有安装的就提示安装
     header('Location: /');
+    $run = false;
+    return false;//阻止后续执行
+}
+if (!$run) {
+    exit();
 }
 // 获取当前PHP版本
 $phpVersion = phpversion();
-// 检查是否大于7.3
+// 检查是否大于7.4
 $php_version = false;
-if (version_compare($phpVersion, '7.4', '>')) {
+if (version_compare($phpVersion, '7.3', '>')) {
     $php_version = true;
 }
 $fileinfo_ext = false;
@@ -40,16 +46,13 @@ $table_name = params('table_name', '');
 $admin_email = params('admin_email', '');
 $admin_password = params('admin_password', '');
 $database_type = params('database_type', 1);//1=全新安装，2=使用已存在数据库不安装数据库
-$redis_host = params('redis_host', '127.0.0.1');
-$redis_port = params('redis_port', 6379);
-$redis_password = params('redis_password', '');
 $error = false;
 $conn = null;
 $status = false;
 if ($db_username && $php_version && $fileinfo_ext && $curl_ext && $zip_ext) {
     $conn = new mysqli($db_host, $db_username, $db_password, null, $db_port);
     if ($conn->connect_error) {
-        $error = '数据库连接失败';
+        $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>'."<div style='margin-top:15px;text-align: center'>{$conn->connect_error}</div>";
     } else {
         if ($database_type == 1) {//全新安装
             $sql = "DROP DATABASE $table_name";//删除原来的
@@ -96,12 +99,6 @@ HOSTPORT =  {$db_port}
 CHARSET = utf8mb4
 DEBUG = false
 
-[REDIS]
-HOST = {$redis_host}
-PORT = {$redis_port}
-PASSWORD = {$redis_password}
-SELECT = 0
-
 [CACHE]
 DRIVER = file
 
@@ -115,12 +112,21 @@ EOF;
     <!DOCTYPE html>
     <html lang="zh">
     <head>
-        <title>Mtab安装页面</title>
+        <title>mTab新标签页安装页面</title>
         <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
         <style>
             body {
                 font-family: Arial, sans-serif;
                 background: url("static/background.jpeg") no-repeat center/cover;
+            }
+
+            *::-webkit-scrollbar {
+                display: none;
+            }
+
+            * {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
             }
 
             form {
@@ -182,33 +188,33 @@ EOF;
                 top: 0;
                 bottom: 0;
                 margin: auto;
-                width: 250px;
+                width: 500px;
                 height: fit-content;
-                padding: 20px;
-                background-color: rgb(211, 82, 0);
+                padding:10px 20px 20px;
+                background-color: rgb(255, 101, 2);
                 color: #fff;
                 border-radius: 12px;
                 justify-content: center;
                 z-index: 9999;
             }
         </style>
-        <link rel='icon' href='favicon.png'>
+        <link rel='icon' href='/static/mtab.png'>
     </head>
     <body>
     <?php if ($error) { ?>
         <div id='error-popup'>
-            <div style='text-align: center'><b>遇到错误了！</b></div>
+            <div style='text-align: center'><h2>错误提示</h2></div>
             <p style='text-align: center;font-size: 18px'><?php echo $error ?></p>
         </div>
 
         <script>
             setTimeout(function () {
                 document.querySelector("#error-popup").style.display = "none";
-            }, 3000);
+            }, 5000);
         </script>
         }
     <?php } ?>
-    <h1 style="text-align: center;color: #fff">MTAB书签安装程序</h1>
+    <h1 style="text-align: center;color: #fff">mTab书签安装程序</h1>
     <form method='post' action='install.php'>
         <div style="font-size: 25px;font-weight: bold;margin-bottom: 15px;">
             请优先授权程序可执行权限(755及以上的权限)，并检查并安装以下php扩展
@@ -255,13 +261,15 @@ EOF;
                 <?php } ?>
             </b>
         </div>
-        <label for='db_host'>mysql数据库地址:</label>
-        <input value="<?php echo $db_host; ?>" placeholder="本地一般是127.0.0.1" type='text' name='db_host' id='db_host'
+        <label for='db_host'>mysql数据库地址: <span style='font-size: 13px;color: #1d5cdc'>Mysql数据库版本必须大于等于5.7及以上，内存大于6G推荐Mysql8,小于推荐Mysql5.7</span></label>
+        <input value="<?php echo $db_host; ?>"
+               placeholder="本地一般是127.0.0.1，docker部署请勿填写127.0.0.1,请使用内网ip或docker容器网关ip或者能到达数据库服务的ip"
+               type='text' name='db_host' id='db_host'
                required><br>
         <label for='db_port'>mysql数据库端口号:</label>
         <input type='number' value="<?php echo $db_port; ?>" placeholder='默认 3306' name='db_port' id='db_port'
                required><br>
-        <label for='db_username'>mysql数据库用户名:</label>
+        <label for='db_username'>mysql数据库用户名:<span style="font-size: 13px;color: #1d5cdc">前提是当前用户名有数据库的控制权限，并且允许访问来源权限是当前服务的IP，或者是 %（代表任何来源）</span></label>
         <input type='text' placeholder="请输入数据库用户名" value="<?php echo $db_username; ?>" name='db_username'
                id='db_username' required><br>
         <label for='db_password'>mysql数据库密码:</label>
@@ -289,9 +297,18 @@ EOF;
         </label>
         <label>
             <input type='radio' name='database_type' value='2' required>
-            使用已存在数据库（不会覆盖数据库，仅安装代码，一般用于负载均衡部署）
+            使用已存在数据库（不会覆盖数据库，仅安装代码，注意的是数据库的数据表要和最新版本的程序的库一致，否则使用旧版本的数据库表<b
+                    style="color: red">却</b>安装最新版的代码，否则导致有些服务异常）
         </label>
-        <input type='submit' value='安装' style="margin-top: 50px"></form>
+        <input type='submit' value='安装' style="margin-top: 30px">
+        <div style='margin-top: 30px;font-size: 14px;line-height: 24px;display: flex;flex-direction: column;align-items: center'>
+            温馨提示：如果您在安装阶段出现问题或对安装方式不知如何操作，可联系我们为您提供解决方法或辅助您安装，本服务不收费
+            <a target='_blank'
+               style='text-decoration: none;color: #ffffff;padding: 5px 15px;background: #1e9fff;border-radius: 30px;margin-top: 10px;'
+               href='https://mtab.cc'>点我跳转至官网，点击右下角客服即可联系</a>
+        </div>
+    </form>
+
     </body>
     </html>
 <?php } else { ?>
