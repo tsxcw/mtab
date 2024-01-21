@@ -18,7 +18,8 @@ class Index extends BaseController
         View::assign("keywords", SettingModel::Config('keywords', 'Mtab书签'));
         View::assign("description", SettingModel::Config('description', 'Mtab书签'));
         View::assign("version", app_version);
-        View::assign("customHead",SettingModel::Config('customHead',''));
+        View::assign("customHead", SettingModel::Config('customHead', ''));
+        View::assign("favicon", SettingModel::Config('logo', '/favicon.ico'));
         return View::fetch("dist/index.html");
     }
 
@@ -26,6 +27,7 @@ class Index extends BaseController
     {
         //从配置中获取logo
         $favicon = $this->Setting('logo');
-        return download(public_path() . $favicon);
+        $file = public_path() . $favicon;
+        return download($file)->mimeType(\PluginStaticSystem::mimeType($file))->header(['Cache-Control' => 'max-age=68400']);
     }
 }

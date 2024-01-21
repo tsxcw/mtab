@@ -18,6 +18,9 @@ class PluginsInstall
         $this->archiveFile = runtime_path() . $info['name_en'] . '.zip';
         $this->extractPath = runtime_path();
         $this->root_path = root_path() . 'plugins/';
+        if (!is_dir($this->root_path)) {//不存在插件目录则创建
+            mkdir($this->root_path,0777,true);
+        }
         $this->download = $info['download'];
         $this->directory = $info['name_en'];
         if (isset($info['update_sql']) && $info['update_sql']) {

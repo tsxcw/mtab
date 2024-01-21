@@ -17,11 +17,12 @@ use think\facade\Db;
 
 class Index extends BaseController
 {
-    public string $authService = "https://auth.mtab.cc";
-    public string $authCode = '';
+    public $authService = "https://auth.mtab.cc";
+    public $authCode = '';
 
     function setSubscription(): \think\response\Json
     {
+        $this->getAdmin();
         $code = $this->request->post("code", "");
         if (trim($code)) {
             Db::table('setting')->replace()->insert(['keys' => 'authCode', 'value' => $code]);
@@ -58,7 +59,7 @@ class Index extends BaseController
                 $f = "";
                 $upGrade = null;
                 if (!empty($json['info']['update_php'])) {
-                    try {//用远程脚本更新
+                    try {//用远程脚本更新,一般用不到，除非上一个版本发生一些问题需要额外脚本处理
                         $f = file_get_contents($json['info']['update_php']);
                         file_put_contents(runtime_path() . 'update.php', $f);
                         require_once $upgradePhp;
@@ -119,7 +120,7 @@ class Index extends BaseController
         }
     }
 
-    function countFilesInDirectory($directory): int
+    private function countFilesInDirectory($directory): int
     {
         $fileCount = 0;
 
@@ -176,7 +177,7 @@ class Index extends BaseController
         return $this->success('ok', $list);
     }
 
-    function render($arr): array
+    private function render($arr): array
     {
         $info = [];
         foreach ($arr as $key => $value) {
@@ -241,6 +242,7 @@ class Index extends BaseController
 
     function stopCard(): \think\response\Json
     {
+        $this->getAdmin();
         $name_en = $this->request->post('name_en', '');
         CardModel::where('name_en', $name_en)->update(['status' => 0]);
         Cache::delete('cardList');
@@ -249,6 +251,7 @@ class Index extends BaseController
 
     function startCard(): \think\response\Json
     {
+        $this->getAdmin();
         $name_en = $this->request->post('name_en', '');
         CardModel::where('name_en', $name_en)->update(['status' => 1]);
         Cache::delete('cardList');
@@ -257,6 +260,7 @@ class Index extends BaseController
 
     function installCard(): \think\response\Json
     {
+        $this->getAdmin();
         $this->initAuth();
         $name_en = $this->request->post("name_en", '');
         $version = 0;
@@ -295,6 +299,7 @@ class Index extends BaseController
 
     function uninstallCard(): \think\response\Json
     {
+        $this->getAdmin();
         $name_en = $this->request->post("name_en");
         if ($name_en) {
             $this->deleteDirectory(root_path() . 'plugins/' . $name_en);
@@ -304,7 +309,7 @@ class Index extends BaseController
         return $this->success('卸载完毕！');
     }
 
-    function deleteDirectory($dir)
+    private function deleteDirectory($dir)
     {
         if (!is_dir($dir)) {
             return;
@@ -322,7 +327,7 @@ class Index extends BaseController
         rmdir($dir);
     }
 
-    protected function readCardInfo($name_en)
+    private function readCardInfo($name_en)
     {
         $file = root_path() . 'plugins/' . $name_en . '/info.json';
         $info = file_get_contents($file);
@@ -333,7 +338,7 @@ class Index extends BaseController
         return false;
     }
 
-    function installCardTask($info): \think\response\Json
+    private function installCardTask($info): \think\response\Json
     {
         if ($info['download']) {
             $task = new \PluginsInstall($info);

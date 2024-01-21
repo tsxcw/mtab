@@ -55,11 +55,63 @@ class Api extends BaseController
         return $this->error('发送失败');
     }
 
+    private function addHttpProtocolRemovePath($url): string
+    {
+        // 解析URL
+        $parsedUrl = parse_url($url);
+        // 检查是否已经有协议，如果没有则添加http://
+        if (!isset($parsedUrl['scheme'])) {
+            // 检查是否以 // 开头，如果是，则转换为相对协议
+            if (isset($parsedUrl['host']) && strpos($url, '//') === 0) {
+                $url = 'http:' . $url;
+            } else {
+                $url = 'http://' . $url;
+            }
+        } else {
+            // 如果有协议但没有路径，保留原样
+            $url = $parsedUrl['scheme'] . '://';
+            // 如果有主机，则添加主机部分
+            if (isset($parsedUrl['host'])) {
+                $url .= $parsedUrl['host'];
+                // 如果有端口号，则添加端口号
+                if (isset($parsedUrl['port'])) {
+                    $url .= ':' . $parsedUrl['port'];
+                }
+            }
+        }
+        return $url;
+    }
+
+    private function addHttpProtocol($url)
+    {
+        // 检查是否已经有协议，如果没有则添加http://
+        if (!parse_url($url, PHP_URL_SCHEME)) {
+            // 检查是否以 // 开头，如果是，则转换为相对协议
+            if (strpos($url, '//') === 0) {
+                $url = 'https:' . $url;
+            } else {
+                $url = 'http://' . $url;
+            }
+        }
+        return $url;
+    }
+
+    private function hasOnlyPath($url): bool
+    {
+        $parsedUrl = parse_url($url);
+        // 检查是否存在路径但不存在域名和协议
+        if (isset($parsedUrl['path']) && !isset($parsedUrl['host']) && !isset($parsedUrl['scheme'])) {
+            return true;
+        }
+        return false;
+    }
+
+
     function getIcon(): \think\response\Json
     {
         $avatar = $this->request->post('avatar');
         if ($avatar) {
-            $remote_avatar = $this->Setting("remote_avatar", "https://avatar.mtab.cc/6.x/thumbs/png?seed=", true);
+            $remote_avatar = $this->Setting("remote_avatar", "https://avatar.mtab.cc/6.x/bottts/png?seed=", true);
             $str = $this->downloadFile($remote_avatar . $avatar, md5($avatar) . '.png');
             return $this->success(['src' => $str]);
         }
@@ -67,24 +119,18 @@ class Api extends BaseController
         $icon = "";
         $cdn = $this->Setting('assets_host', '');
         if ($url) {
-            $urlInfo = parse_url($url);
-            $host = $urlInfo['host'] ?? $urlInfo['path'];
-            $title = '';
-            $scheme = "http";
-            if (isset($urlInfo['scheme'])) {
-                $scheme = $urlInfo["scheme"];
-            }
-            $realUrl = $scheme . "://" . $host;
+            $realUrl = $this->addHttpProtocolRemovePath($url);
             $client = \Axios::http();
-            $response = null;
-            $status = null;
             try {
-                $response = $client->get($realUrl);
+                $response = $client->get($realUrl, [
+                    'headers' => [
+                        "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                    ]
+                ]);
                 $status = $response->getStatusCode();
             } catch (\Exception $e) {
-                return $this->error('获取失败');
+                return $this->error('无法连接远程目标服务器');
             }
-
             if ($status == 200) {
                 $body = $response->getBody()->getContents();
                 $dom = new Dom();
@@ -95,17 +141,27 @@ class Api extends BaseController
                 }
                 try {
                     $list = $dom->find('[rel="icon"]');
+                    if (count($list) == 0) {
+                        $list = $dom->find('[rel="shortcut icon"]');
+                    }
+                    if (count($list) == 0) {
+                        $list = $dom->find('[rel="Shortcut Icon"]');
+                    }
                     if (count($list) > 0) {
-                        $icon = $list->href;
-                        $iconInfo = parse_url($icon);
-                        if (!isset($iconInfo['scheme'])) {
-                            if (isset($iconInfo['host'])) {
-                                $icon = "https://" . $iconInfo["host"] . $icon;
-                            } else {
-                                $icon = $realUrl . $icon;
+                        $href = $list->href;
+                        if ($this->hasOnlyPath($href)) {
+                            if ($href[0]!='/') {
+                                $href = "/" . $href;
                             }
+                            $href = $realUrl . $href;
                         }
-                        $response = \Axios::http()->head($icon);
+                        $href = $this->addHttpProtocol($href);
+                        $icon = $href;
+                        $response = \Axios::http()->get($icon, [
+                            'headers' => [
+                                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                            ]
+                        ]);
                         $contentType = $response->getHeader('content-type');
                         $contentType = $contentType[0];
                         if (preg_match('/(png|jpg|jpeg|x-icon|svg\+xml)$/', $contentType, $matches)) {
@@ -114,7 +170,7 @@ class Api extends BaseController
                                 'jpg' => 'jpg',
                                 'jpeg' => 'jpeg',
                                 'x-icon' => 'ico',
-                                'svg+xml' => 'svg'
+                                'svg+xml' => 'svg',
                             );
                             $fileFormat = $matches[1];
                             $icon = $this->downloadFile($icon, md5($realUrl) . '.' . $contentType[$fileFormat]);
@@ -124,7 +180,6 @@ class Api extends BaseController
                         } else {
                             $icon = '';
                         }
-
                     }
                 } catch (\ErrorException $e) {
                 }
@@ -149,7 +204,7 @@ class Api extends BaseController
                 return $this->success(['src' => $icon, 'name' => $title]);
             }
         }
-        return $this->error('no');
+        return $this->error('没有抓取到图标');
     }
 
     private function downloadFile($url, $name)
@@ -163,7 +218,10 @@ class Api extends BaseController
         }
         try {
             $response = $client->request('GET', $url, [
-                'sink' => $downloadPath
+                'sink' => $downloadPath,
+                'headers' => [
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                ]
             ]);
             return $path . $name;
         } catch (RequestException $e) {
@@ -175,7 +233,7 @@ class Api extends BaseController
     {
         $send = $this->request->get('seed');
         $client = new Client();
-        $remote_avatar = $this->Setting('remote_avatar', 'https://avatar.mtab.cc/6.x/thumbs/png?seed=', true);
+        $remote_avatar = $this->Setting('remote_avatar', 'https://avatar.mtab.cc/6.x/bottts/png?seed=', true);
         $response = $client->get($remote_avatar . urlencode($send), [
             'stream' => true,
             'timeout' => 10,
@@ -190,9 +248,9 @@ class Api extends BaseController
             return $this->error('not File');
         }
         if ($file->getSize() > 1024 * 1024 * 5) {
-            return $this->error('max fileSize is 5M');
+            return $this->error('文件最大5MB');
         }
-        if (in_array(strtolower($file->getOriginalExtension()), ['png', 'jpg', 'jpeg', 'webp', 'ico'])) {
+        if (in_array(strtolower($file->getOriginalExtension()), ['png', 'jpg', 'jpeg', 'webp', 'ico', 'svg'])) {
             // 验证文件并保存
             try {
                 // 构建保存路径

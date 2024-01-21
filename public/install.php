@@ -49,10 +49,37 @@ $database_type = params('database_type', 1);//1=全新安装，2=使用已存在
 $error = false;
 $conn = null;
 $status = false;
+
+function isDatabaseVersionValid($conn)
+{
+    // 检查连接是否成功
+    if ($conn->connect_error) {
+        die('连接失败: ' . $conn->connect_error);
+    }
+    // 获取数据库类型和版本信息
+    $db_info = $conn->get_server_info();
+    // 判断数据库类型和版本
+    if (strpos($db_info, 'MariaDB') !== false) {
+        // 是 MariaDB，检查版本是否大于等于 10.2.7
+        $maria_version = explode('-', $db_info)[0]; // 提取版本号
+        return version_compare($maria_version, '10.2.7', '>=');
+    } elseif (strpos($db_info, 'MySQL') !== false) {
+        // 是 MySQL，检查版本是否大于等于 5.7
+        $mysql_version = explode('-', $db_info)[0]; // 提取版本号
+        return version_compare($mysql_version, '5.7', '>=');
+    } else {
+        // 未知数据库类型
+        return false;
+    }
+}
+
+
 if ($db_username && $php_version && $fileinfo_ext && $curl_ext && $zip_ext) {
     $conn = new mysqli($db_host, $db_username, $db_password, null, $db_port);
     if ($conn->connect_error) {
-        $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>'."<div style='margin-top:15px;text-align: center'>{$conn->connect_error}</div>";
+        $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>{$conn->connect_error}</div>";
+    } else if (!isDatabaseVersionValid($conn)) {
+        $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>数据库版本低于5.7,请升级数据库版本至5.7及以上版本！</div>";
     } else {
         if ($database_type == 1) {//全新安装
             $sql = "DROP DATABASE $table_name";//删除原来的
@@ -78,9 +105,9 @@ if ($db_username && $php_version && $fileinfo_ext && $curl_ext && $zip_ext) {
                  ");
             $conn->query($AdminSql);
             $conn->close();
+            file_put_contents('./installed.lock', 'installed');
+            $status = true;
         }
-        file_put_contents('./installed.lock', 'installed');
-        $status = true;
     }
 }
 if ($status) {
@@ -190,7 +217,7 @@ EOF;
                 margin: auto;
                 width: 500px;
                 height: fit-content;
-                padding:10px 20px 20px;
+                padding: 10px 20px 20px;
                 background-color: rgb(255, 101, 2);
                 color: #fff;
                 border-radius: 12px;

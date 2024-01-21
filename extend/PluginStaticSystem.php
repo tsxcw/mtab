@@ -7,12 +7,12 @@ class PluginStaticSystem
         $file = preg_replace("#\.\.#", "", $file);
         $file = plugins_path("static/" . $file);
         if (file_exists($file)) {
-            return download($file)->force(false)->mimeType($this->mimeType($file))->header(['Cache-Control' => 'max-age=68400']);
+            return download($file)->force(false)->mimeType(self::mimeType($file))->header(['Cache-Control' => 'max-age=68400']);
         }
         return response('', 404);
     }
 
-    function mimeType($ext): string
+    static function mimeType($ext): string
     {
         $ext = pathinfo($ext);
         if ($ext['extension']) {

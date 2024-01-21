@@ -6,6 +6,8 @@ namespace app\controller;
 
 use app\BaseController;
 use app\model\ConfigModel;
+use app\model\SearchEngineModel;
+use app\model\UserSearchEngineModel;
 
 class Config extends BaseController
 {
