@@ -5,11 +5,11 @@ function params($key, $default_value = '')
 }
 
 $run = true;
-if (file_exists('./installed.lock')) {//如果没有安装的就提示安装
-    header('Location: /');
-    $run = false;
-    return false;//阻止后续执行
-}
+ if (file_exists('./installed.lock')) {//如果没有安装的就提示安装
+     header('Location: /');
+     $run = false;
+     return false;//阻止后续执行
+ }
 if (!$run) {
     exit();
 }
@@ -50,27 +50,25 @@ $error = false;
 $conn = null;
 $status = false;
 
-function isDatabaseVersionValid($conn)
+function isDatabaseVersionValid($conn): bool
 {
-    // 检查连接是否成功
-    if ($conn->connect_error) {
-        die('连接失败: ' . $conn->connect_error);
+    global $error;
+    $serverInfo = mysqli_get_server_info($conn);
+    if (strpos($serverInfo, 'MariaDB') !== false) {
+        preg_match('/^(\d+\.\d+\.\d+)/', $serverInfo, $matches);
+        $mariaDbVersion = $matches[1];
+        if (version_compare(trim($mariaDbVersion), '10.2.7', '>=')) {//验证MariaDB数据库版本是否大于10.2.7
+            return true;
+        }else{
+            $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>MariaDB版本低于10.2.7，请升级MariaDB版本至10.2.7及以上!</div>";
+            return false;
+        }
     }
-    // 获取数据库类型和版本信息
-    $db_info = $conn->get_server_info();
-    // 判断数据库类型和版本
-    if (strpos($db_info, 'MariaDB') !== false) {
-        // 是 MariaDB，检查版本是否大于等于 10.2.7
-        $maria_version = explode('-', $db_info)[0]; // 提取版本号
-        return version_compare($maria_version, '10.2.7', '>=');
-    } elseif (strpos($db_info, 'MySQL') !== false) {
-        // 是 MySQL，检查版本是否大于等于 5.7
-        $mysql_version = explode('-', $db_info)[0]; // 提取版本号
-        return version_compare($mysql_version, '5.7', '>=');
-    } else {
-        // 未知数据库类型
-        return false;
+    if (version_compare($serverInfo, '5.7', '>=')) {//验证数据库版本是否大于5.7
+        return true;
     }
+    $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>Mysql数据库版本低于5.7，请升级Mysql数据库至5.7及以上！</div>";
+    return false;
 }
 
 
@@ -79,7 +77,7 @@ if ($db_username && $php_version && $fileinfo_ext && $curl_ext && $zip_ext) {
     if ($conn->connect_error) {
         $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>{$conn->connect_error}</div>";
     } else if (!isDatabaseVersionValid($conn)) {
-        $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>数据库版本低于5.7,请升级数据库版本至5.7及以上版本！</div>";
+
     } else {
         if ($database_type == 1) {//全新安装
             $sql = "DROP DATABASE $table_name";//删除原来的
