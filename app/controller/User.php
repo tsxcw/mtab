@@ -66,7 +66,7 @@ class User extends BaseController
             if (UserModel::where("mail", $user)->field("id,mail")->find()) {
                 return $this->error("账号已存在");
             }
-            $add = UserModel::insert(["mail" => $user, "password" => md5($pass), "create_time" => date('Y-m-d H:i:s'),'register_ip'=>getRealIp()]);
+            $add = UserModel::insert(["mail" => $user, "password" => md5($pass), "create_time" => date('Y-m-d H:i:s'), 'register_ip' => getRealIp()]);
             if ($add) {
                 Cache::delete("code" . $user);
                 return $this->success("ok");
@@ -105,6 +105,15 @@ class User extends BaseController
             }
         }
         return $this->error('修改失败');
+    }
+
+    function loginOut(): \think\response\Json
+    {
+        $user = $this->getUser();
+        if ($user) {
+            TokenModel::where("user_id", $user['user_id'])->where('token', $user['token'])->delete();
+        }
+        return $this->success('ok');
     }
 
     public function get(): \think\response\Json

@@ -23,11 +23,14 @@ class Index extends BaseController
         return View::fetch("dist/index.html");
     }
 
-    function favicon(): \think\response\File
+    function favicon()
     {
         //从配置中获取logo
         $favicon = $this->Setting('logo');
         $file = public_path() . $favicon;
-        return download($file)->mimeType(\PluginStaticSystem::mimeType($file))->header(['Cache-Control' => 'max-age=68400']);
+        if (file_exists($file)&&is_file($file)) {
+            return download($file)->mimeType(\PluginStaticSystem::mimeType($file))->header(['Cache-Control' => 'max-age=68400']);
+        }
+        return redirect("/static/mtab.png");
     }
 }

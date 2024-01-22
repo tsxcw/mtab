@@ -17,14 +17,14 @@ class LinkStore extends BaseController
         $area = $this->request->post('area', false);
         $sql = [];
         if ($name) {
-            $sql[] = ['name|tips', 'like', '%' . $name . '%'];
+            $sql[] = ['name|tips', 'like', "%" . $name . "%"];
         }
         $list = LinkStoreModel::where($sql);
         //area需要使用find_in_set来匹配
         if ($area && $area != 0) {
             $list = $list->whereRaw("find_in_set('$area',area)");
         }
-        $list = $list->order('create_time', 'desc')->paginate($limit);
+        $list = $list->order("create_time", 'desc')->paginate($limit);
         return $this->success('ok', $list);
     }
 
@@ -43,21 +43,21 @@ class LinkStore extends BaseController
         if ($area && $area != '全部') {
             $list = $list->whereRaw("find_in_set('$area',area)");
         }
-        $list = $list->order($this->request->post('sort.prop', 'id'), $this->request->post('sort.order', 'asc'))->paginate($limit);
+        $list = $list->order($this->request->post('sort.prop','id'), $this->request->post('sort.order','asc'))->paginate($limit);
         return $this->success('ok', $list);
     }
 
     function getFolder(): \think\response\Json
     {
-        return $this->success('ok', LinkFolderModel::order('sort', 'desc')->select());
+        return $this->success("ok", LinkFolderModel::order("sort","desc")->select());
     }
 
     private function update(): \think\response\Json
     {
         is_demo_mode(true);
         $admin = $this->getAdmin();
-        $data = $this->request->post('form');
-        $info = LinkStoreModel::where('id', $data['id'])->update($data);
+        $data = $this->request->post("form");
+        $info = LinkStoreModel::where("id", $data['id'])->update($data);
         return $this->success('修改成功', $info);
     }
 
@@ -70,7 +70,7 @@ class LinkStore extends BaseController
             if (isset($data['id']) && $data['id']) { //更新
                 return $this->update();
             } else {
-                $data['create_time'] = date('Y-m-d H:i:s');
+                $data['create_time'] = date("Y-m-d H:i:s");
                 $info = (new \app\model\LinkStoreModel)->insert($data);
                 return $this->success('添加成功', $info);
             }
@@ -102,7 +102,7 @@ class LinkStore extends BaseController
     {
         $id = $this->request->post('id', false);
         //给标签+=1
-        $res = Db::table('linkstore')->where('id', $id)->inc('install_num')->update();
+        $res = Db::table("linkstore")->where('id', $id)->inc('install_num')->update();
         if ($res) {
             return $this->success('ok');
         }
@@ -127,7 +127,7 @@ class LinkStore extends BaseController
 
         } else if ($type === 'del') {
             $id = $this->request->post('id');
-            $result = LinkFolderModel::where('id', $id)->find();
+            $result = LinkFolderModel::where("id", $id)->find();
             if ($result) {
                 $result->delete();
                 Db::query(
@@ -145,7 +145,7 @@ class LinkStore extends BaseController
         is_demo_mode(true);
         $this->getAdmin();
         $ids = $this->request->post('ids', []);
-        LinkStoreModel::where('id', 'in', $ids)->delete();
+        LinkStoreModel::where("id", 'in', $ids)->delete();
         return $this->success('删除成功');
     }
 }

@@ -39,9 +39,9 @@ class Link extends BaseController
                 return $this->success('ok', $data['link']);
             }
         }
-        $config = $this->Setting("defaultTab", '/static/defaultTab.json', true);
+        $config = $this->Setting("defaultTab", 'static/defaultTab.json', true);
         if ($config) {
-            $fp = joinPath(public_path(), $config);
+            $fp = public_path() . $config;
             if (file_exists($fp)) {
                 $file = file_get_contents($fp);
                 $json = json_decode($file, true);

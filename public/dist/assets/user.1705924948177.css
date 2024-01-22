@@ -1,0 +1,1 @@
+.user-control{position:relative;height:100%;overflow-y:scroll}.user-control [userBox]{border-radius:10px;background-color:#fff;padding:10px;display:flex;flex-direction:column;align-items:center}.user-control [userBox]>div{width:100%;display:flex;flex-direction:column;align-items:center;font-size:13px}.user-control [userBox]>div>.iconfont{font-size:30px}
