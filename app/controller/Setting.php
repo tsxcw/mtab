@@ -27,7 +27,12 @@ class Setting extends BaseController
         Cache::delete('webConfig');
         return $this->success('保存成功');
     }
-
+    function refreshCache(): \think\response\Json
+    {
+        $this->getAdmin();
+        Cache::delete('webConfig');
+        return $this->success('刷新成功');
+    }
     function getSetting(): \think\response\Json
     {
         $admin = $this->getAdmin();

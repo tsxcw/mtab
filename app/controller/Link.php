@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\BaseController;
+use app\model\ConfigModel;
 use app\model\HistoryModel;
 use app\model\LinkModel;
 use app\model\SettingModel;
@@ -60,6 +61,10 @@ class Link extends BaseController
                 $data->delete();
             }
             $data = TabbarModel::find($user['user_id']);
+            if ($data) {
+                $data->delete();
+            }
+            $data = ConfigModel::find($user['user_id']);
             if ($data) {
                 $data->delete();
             }

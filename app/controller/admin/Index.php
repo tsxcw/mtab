@@ -4,12 +4,7 @@ namespace app\controller\admin;
 
 use app\BaseController;
 use app\model\CardModel;
-use app\model\LinkStoreModel;
 use app\model\SettingModel;
-use app\model\UserModel;
-use DateInterval;
-use DatePeriod;
-use DateTime;
 use think\facade\Cache;
 use think\facade\Db;
 
@@ -41,7 +36,7 @@ class Index extends BaseController
         $this->authService = $this->Setting('authServer', 'https://auth.mtab.cc', true);
     }
 
-    function updateApp(): \think\response\Json
+    function updateApp($n = 0): \think\response\Json
     {
         $this->getAdmin();
         $this->initAuth();
@@ -120,96 +115,6 @@ class Index extends BaseController
         }
     }
 
-    private function countFilesInDirectory($directory): int
-    {
-        $fileCount = 0;
-
-        // 获取目录中的文件和子目录
-        $files = scandir($directory);
-
-        foreach ($files as $file) {
-            // 排除"."和".."
-            if ($file != '.' && $file != '..') {
-                $filePath = $directory . '/' . $file;
-
-                // 如果是目录，则递归调用函数
-                if (is_dir($filePath)) {
-                    $fileCount += $this->countFilesInDirectory($filePath);
-                } else {
-                    // 如果是文件，则增加文件数量
-                    $fileCount++;
-                }
-            }
-        }
-
-        return $fileCount;
-    }
-
-    function getServicesStatus(): \think\response\Json
-    {
-        $this->getAdmin();
-        $userNum = UserModel::count("id");
-        $linkNum = LinkStoreModel::count("id");
-        $redisNum = 0;
-        $fileNum = Cache::get("fileNum");
-        if (!$fileNum) {
-            if (is_dir(public_path() . 'images')) {
-                $fileNum = $this->countFilesInDirectory(public_path() . 'images');
-                Cache::set('fileNum', $fileNum, 300);
-            }
-        }
-        return $this->success("ok", ["userNum" => $userNum, "linkNum" => $linkNum, "redisNum" => $redisNum, "fileNum" => $fileNum]);
-    }
-
-    function getUserLine(): \think\response\Json
-    {
-        $this->getAdmin();
-        $result = UserModel::whereMonth('create_time');
-        $result = $result->field('DATE_FORMAT(create_time, "%Y-%m-%d") as time, count(id) as total');
-        $result = $result->group('time')->select();
-        return $this->success('ok', $this->render($result));
-    }
-
-    function getHotTab(): \think\response\Json
-    {
-        $this->getAdmin();
-        $list = LinkStoreModel::order('install_num', 'desc')->limit(30)->cache('hotTab', 60)->select()->toArray();
-        return $this->success('ok', $list);
-    }
-
-    private function render($arr): array
-    {
-        $info = [];
-        foreach ($arr as $key => $value) {
-            $info[$value['time']] = $value['total'];
-        }
-        $time = [];
-        $total = [];
-        //当月的第一天
-        $start = date('Y-m-01', strtotime(date('Y-m-d')));
-        //当月的最后一天
-        $end = date('Y-m-d', strtotime(date('Y-m-01') . ' +1 month -1 day'));
-        $start_date = new DateTime($start);
-        $end_date = new DateTime($end);
-        $interval = new DateInterval('P1D');
-        $dateRange = new DatePeriod($start_date, $interval, $end_date);
-        $ts = null;
-        foreach ($dateRange as $date) {
-            $ts = $date->format('Y-m-d');
-            $time[] = $ts;
-            if (isset($info[$ts])) {
-                $total[] = $info[$ts];
-            } else {
-                $total[] = 0;
-            }
-        }
-        // 判断是否需要添加最后一天的数据
-        if ($end_date->format('Y-m-d') != $ts) {
-            $time[] = $end_date->format('Y-m-d');
-            $total[] = isset($info[$end_date->format('Y-m-d')]) ? $info[$end_date->format('Y-m-d')] : 0;
-        }
-        return ['time' => $time, 'total' => $total, 'sum' => array_sum($total)];
-    }
 
     function cardList(): \think\response\Json
     {

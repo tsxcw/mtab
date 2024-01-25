@@ -39,6 +39,17 @@ class Config extends BaseController
                 return $this->success("ok", $data['config']);
             }
         }
-        return $this->error('not Config');
+        $config = $this->Setting('defaultTab', 'static/defaultTab.json', true);
+        if ($config) {
+            $fp = public_path() . $config;
+            if (file_exists($fp)) {
+                $file = file_get_contents($fp);
+                $json = json_decode($file, true);
+                if (isset($json['config'])) {
+                    return $this->success('ok', $json['config']);
+                }
+            }
+        }
+        return $this->error('no Config');
     }
 }

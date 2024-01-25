@@ -51,6 +51,7 @@ class Upgrade2
                 $this->delZip();
                 return '升级资源包解压失败';
             }
+            $this->deleteDirectory(public_path().'dist/');//删除旧的网站文件
             //拷贝覆盖
             $this->copy();
             //删除下载的更新包
