@@ -23,6 +23,7 @@ class Api extends BaseController
         }
         return $this->success("ok", [
             'email' => $this->Setting('email', ''),
+            'qqGroup' => $this->Setting("qqGroup", ''),
             "recordNumber" => $this->Setting("recordNumber", ''),
             "auth" => $auth
         ]);
@@ -150,7 +151,7 @@ class Api extends BaseController
                     if (count($list) > 0) {
                         $href = $list->href;
                         if ($this->hasOnlyPath($href)) {
-                            if ($href[0]!='/') {
+                            if ($href[0] != '/') {
                                 $href = "/" . $href;
                             }
                             $href = $realUrl . $href;

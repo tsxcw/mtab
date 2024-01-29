@@ -139,7 +139,15 @@ class LinkStore extends BaseController
         }
         return $this->success('处理完毕！');
     }
-
+    function moveFolder(): \think\response\Json
+    {
+        is_demo_mode(true);
+        $this->getAdmin();
+        $ids = $this->request->post('link', []);
+        $area = $this->request->post('area', '');
+        LinkStoreModel::where('id', 'in', $ids)->update(['area'=>$area]);
+        return $this->success('处理完毕！');
+    }
     public function del(): \think\response\Json
     {
         is_demo_mode(true);

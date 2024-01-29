@@ -36,7 +36,7 @@ class User extends BaseController
         $token = renderToken($user);
         $agent = $this->request->header("User-Agent");
         $agent = mb_substr($agent, 0, 250);
-        $auth = ["user_id" => $info['id'], 'token' => $token, 'create_time' => time(), 'ip' => $this->request->ip(), 'user_agent' => $agent];
+        $auth = ["user_id" => $info['id'], 'token' => $token, 'create_time' => time(), 'ip' => getRealIp(), 'user_agent' => $agent];
         $add = TokenModel::insert($auth);
         unset($auth['user_agent']);
         unset($auth['ip']);

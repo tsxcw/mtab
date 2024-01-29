@@ -5,11 +5,11 @@ function params($key, $default_value = '')
 }
 
 $run = true;
- if (file_exists('./installed.lock')) {//如果没有安装的就提示安装
-     header('Location: /');
-     $run = false;
-     return false;//阻止后续执行
- }
+if (file_exists('./installed.lock')) {//如果没有安装的就提示安装
+    header('Location: /');
+    $run = false;
+    return false;//阻止后续执行
+}
 if (!$run) {
     exit();
 }
@@ -17,7 +17,7 @@ if (!$run) {
 $phpVersion = phpversion();
 // 检查是否大于7.4
 $php_version = false;
-if (version_compare($phpVersion, '7.3', '>')) {
+if (version_compare($phpVersion, '7.4', '>')) {
     $php_version = true;
 }
 $fileinfo_ext = false;
@@ -57,10 +57,10 @@ function isDatabaseVersionValid($conn): bool
     if (strpos($serverInfo, 'MariaDB') !== false) {
         preg_match('/^(\d+\.\d+\.\d+)/', $serverInfo, $matches);
         $mariaDbVersion = $matches[1];
-        if (version_compare(trim($mariaDbVersion), '10.2.7', '>=')) {//验证MariaDB数据库版本是否大于10.2.7
+        if (version_compare(trim($mariaDbVersion), '10.2.3', '>=')) {//验证MariaDB数据库版本是否大于10.2.3
             return true;
         }else{
-            $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>MariaDB版本低于10.2.7，请升级MariaDB版本至10.2.7及以上!</div>";
+            $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>MariaDB版本低于10.2.3，请升级MariaDB版本至10.2.3及以上!</div>";
             return false;
         }
     }
@@ -326,8 +326,8 @@ EOF;
                     style="color: red">却</b>安装最新版的代码，否则导致有些服务异常）
         </label>
         <input type='submit' value='安装' style="margin-top: 30px">
-        <div style='margin-top: 30px;font-size: 14px;line-height: 24px;display: flex;flex-direction: column;align-items: center'>
-            温馨提示：如果您在安装阶段出现问题或对安装方式不知如何操作，可联系我们为您提供解决方法或辅助您安装，本服务不收费
+        <div style='margin-top: 30px;font-size: 14px;line-height: 24px;display: flex;flex-direction: column;align-items: center;text-align: center'>
+            <b style="font-size: 18px">温馨提示</b>如果您在安装阶段出现问题或对安装方式（特别是Nas部署用户）不知如何操作，可联系我们为您提供解决方法或辅助您安装，本服务不收费
             <a target='_blank'
                style='text-decoration: none;color: #ffffff;padding: 5px 15px;background: #1e9fff;border-radius: 30px;margin-top: 10px;'
                href='https://mtab.cc'>点我跳转至官网，点击右下角客服即可联系</a>

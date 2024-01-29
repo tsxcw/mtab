@@ -12,9 +12,12 @@ create table card
     url         varchar(255)  null comment '卡片地址',
     `window`    varchar(255)  null comment '窗口地址',
     update_time datetime      null,
-    install_num int default 0 null
+    install_num int default 0 null,
+    setting     varchar(200)  null comment '设置页面的url',
+    dict_option longtext      null comment '配置的参数'
 )
     comment '卡片数据表';
+
 
 create table config
 (

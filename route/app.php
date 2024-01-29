@@ -22,9 +22,7 @@ Route::group("/plugins", function () {
                 $router = $pluginsDir . $item . '/route.php';
                 if (file_exists($router)) {
                     $_ENV['plugins_dir_name'] = $pluginsDir . $item;
-                    if (\app\model\CardModel::cardStatus($pluginsDirName)) {
-                        include_once $router;
-                    }
+                    include_once $router;
                     break;
                 }
             }

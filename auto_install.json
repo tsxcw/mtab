@@ -7,7 +7,7 @@
     }
   ],
   "success_url": "/install.php",
-  "php_versions": "73,74",
+  "php_versions": "74",
   "db_config": "",
   "admin_username": "",
   "admin_password": "",

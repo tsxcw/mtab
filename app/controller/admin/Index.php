@@ -259,6 +259,9 @@ class Index extends BaseController
                     'url' => $config['url'],
                     'window' => $config['window'],
                 ];
+                if (isset($config['setting'])) {
+                    $data['setting'] = $config['setting'];
+                }
                 $find = CardModel::where('name_en', $info['name_en'])->find();
                 if ($find) {
                     $find->force()->save($data);
