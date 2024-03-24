@@ -6,7 +6,6 @@ use app\BaseController;
 use app\model\ConfigModel;
 use app\model\HistoryModel;
 use app\model\LinkModel;
-use app\model\SettingModel;
 use app\model\TabbarModel;
 
 class Link extends BaseController
@@ -24,7 +23,7 @@ class Link extends BaseController
                 } else {
                     LinkModel::create(["user_id" => $user['user_id'], "link" => $link]);
                 }
-                HistoryModel::create(["user_id" => $user['user_id'], "link" => $link]); //历史记录备份,用于用户误操作回复用途
+                HistoryModel::create(["user_id" => $user['user_id'], "link" => $link]); //历史记录备份,用于用户误操作恢复用途
                 return $this->success('ok');
             }
         }

@@ -6,6 +6,7 @@ use app\BaseController;
 use app\model\LinkStoreModel;
 use app\model\SearchEngineModel;
 use app\model\UserSearchEngineModel;
+use think\facade\Cache;
 
 class SearchEngine extends BaseController
 {
@@ -39,6 +40,7 @@ class SearchEngine extends BaseController
                 $model = $model->find($data['id']);
             }
             $model->save($data);
+            Cache::delete("searchEngine");
             return $this->success("保存成功！");
         }
         return $this->error('缺少数据');
@@ -50,6 +52,7 @@ class SearchEngine extends BaseController
         $this->getAdmin();
         $ids = $this->request->post('ids', []);
         SearchEngineModel::where('id', 'in', $ids)->delete();
+        Cache::delete("searchEngine");
         return $this->success('删除成功');
     }
 
@@ -62,7 +65,11 @@ class SearchEngine extends BaseController
                 return $this->success('ok', $data['list']);
             }
         }
-        $list = SearchEngineModel::where('status', 1)->order('sort', 'desc')->limit(10)->select()->toArray();
+        $list = Cache::get("searchEngine", false);
+        if (!$list) {
+            $list = SearchEngineModel::where('status', 1)->order('sort', 'desc')->limit(10)->select()->toArray();
+            Cache::set("searchEngine", $list, 60 * 60 * 24);
+        }
         return $this->success('ok', $list);
     }
 
@@ -83,5 +90,12 @@ class SearchEngine extends BaseController
             }
         }
         return $this->error('保存失败');
+    }
+    function sort(){
+        $sort = (array)$this->request->post();
+        foreach ($sort as $key => $value) {
+            SearchEngineModel::where("id", $value['id'])->update(['sort' => $value['sort']]);
+        }
+        return $this->success("ok");
     }
 }

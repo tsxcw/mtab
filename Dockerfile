@@ -17,7 +17,7 @@ COPY . /www
 RUN chmod +x /install.sh && /install.sh && rm /install.sh
 
 
-EXPOSE 6379 80 443 8080
+EXPOSE 80
 
 CMD ["./start.sh"]
 

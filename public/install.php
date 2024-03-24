@@ -55,14 +55,15 @@ function isDatabaseVersionValid($conn): bool
     global $error;
     $serverInfo = mysqli_get_server_info($conn);
     if (strpos($serverInfo, 'MariaDB') !== false) {
-        preg_match('/^(\d+\.\d+\.\d+)/', $serverInfo, $matches);
-        $mariaDbVersion = $matches[1];
-        if (version_compare(trim($mariaDbVersion), '10.2.3', '>=')) {//验证MariaDB数据库版本是否大于10.2.3
-            return true;
-        }else{
-            $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>MariaDB版本低于10.2.3，请升级MariaDB版本至10.2.3及以上!</div>";
-            return false;
-        }
+        return true;
+        // preg_match('/^(\d+\.\d+\.\d+)/', $serverInfo, $matches);
+        // $mariaDbVersion = $matches[1];
+        // if (version_compare(trim($mariaDbVersion), '10.0.0', '>=')) {//验证MariaDB数据库版本是否大于10.2.3
+        //     return true;
+        // }else{
+        //     $error = '<div style="text-align: center">数据库相关错误,详细信息如下</div>' . "<div style='margin-top:15px;text-align: center'>MariaDB版本低于10.0.0，请升级MariaDB版本至10.0.0及以上!</div>";
+        //     return false;
+        // }
     }
     if (version_compare($serverInfo, '5.7', '>=')) {//验证数据库版本是否大于5.7
         return true;

@@ -16,7 +16,6 @@ class SettingModel extends Model
     protected $pk = "keys";
     static array $CacheConfig = [];
 
- 
 
     public static function Config($key = false, $default = '##')
     {

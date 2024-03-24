@@ -1,5 +1,5 @@
 {
-  "php_ext": "redis,fileinfo",
+  "php_ext": "redis,fileinfo,opcache",
   "chmod": [
     {
       "mode": 755,

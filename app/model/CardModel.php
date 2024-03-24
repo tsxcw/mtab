@@ -56,19 +56,16 @@ class CardModel extends Model
     public static function config(string $cardName = '', string $key = '', string $default = '')
     {
         $card = self::where('name_en', $cardName)->value('dict_option');
-        if ($card) {
-            try {
-                $json = json_decode($card, true);
-                if (isset($json[$key])) {
-                    return $json[$key];
-                }
-            } catch (\Exception $e) {
+        try {
+            $json = json_decode($card, true);
+            if (isset($json[$key])) {
+                return $json[$key];
             }
+        } catch (\Exception $e) {
+        }
 
-            if ($default) {
-                return $default;
-            }
-            return null;
+        if ($default) {
+            return $default;
         }
         return null;
     }
@@ -125,7 +122,7 @@ class CardModel extends Model
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function saveConfig(string $cardName = '', string $key = '', $value=''): bool
+    public static function saveConfig(string $cardName = '', string $key = '', $value = ''): bool
     {
         $card = self::where('name_en', $cardName)->find();
         if ($card) {

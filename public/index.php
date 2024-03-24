@@ -1,17 +1,8 @@
 <?php
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006-2019 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
-// [ 应用入口文件 ]
+
 namespace think;
-define('app_version', '1.3.9');
-define('app_version_code', 39);
+define('app_version', '1.6.5');
+define('app_version_code', 65);
 require __DIR__ . '/../vendor/autoload.php';
 
 // 执行HTTP应用并响应

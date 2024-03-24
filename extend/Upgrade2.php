@@ -119,7 +119,7 @@ class Upgrade2
         foreach ($sql_statements as $sql_statement) {
             if (!empty($sql_statement)) {
                 try {
-                    \think\facade\Db::query($sql_statement);
+                    \think\facade\Db::execute($sql_statement);
                 } catch (Exception $e) {
 
                 }

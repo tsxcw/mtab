@@ -36,9 +36,18 @@ class Setting extends BaseController
     function getSetting(): \think\response\Json
     {
         $admin = $this->getAdmin();
+        $role = $this->request->post('role', []);
         $info = SettingModel::Config();
+        $tmp = [];
         if ($info) {
-            return $this->success('ok', $info);
+            if (count($role) > 0) {
+                foreach ($info as $key => $val) {
+                    if (in_array($key, $role)) {
+                        $tmp[$key] = $val;
+                    }
+                }
+            }
+            return $this->success('ok', $tmp);
         }
         return $this->error('empty');
     }

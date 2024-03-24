@@ -95,10 +95,11 @@ class Index extends BaseController
         $this->getAdmin();
         $this->initAuth();
         $result = \Axios::http()->post($this->authService . '/checkAuth', [
-            'timeout' => 5,
+            'timeout' => 10,
             'form_params' => [
                 'authorization_code' => $this->authCode,
                 'version_code' => app_version_code,
+                'domain' => request()->domain()
             ]
         ]);
         $info = [];
@@ -148,6 +149,7 @@ class Index extends BaseController
     function stopCard(): \think\response\Json
     {
         $this->getAdmin();
+        is_demo_mode(true);
         $name_en = $this->request->post('name_en', '');
         CardModel::where('name_en', $name_en)->update(['status' => 0]);
         Cache::delete('cardList');
@@ -205,6 +207,7 @@ class Index extends BaseController
     function uninstallCard(): \think\response\Json
     {
         $this->getAdmin();
+        is_demo_mode(true);
         $name_en = $this->request->post("name_en");
         if ($name_en) {
             $this->deleteDirectory(root_path() . 'plugins/' . $name_en);

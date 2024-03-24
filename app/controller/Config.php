@@ -8,6 +8,7 @@ use app\BaseController;
 use app\model\ConfigModel;
 use app\model\SearchEngineModel;
 use app\model\UserSearchEngineModel;
+use stdClass;
 
 class Config extends BaseController
 {
@@ -46,10 +47,10 @@ class Config extends BaseController
                 $file = file_get_contents($fp);
                 $json = json_decode($file, true);
                 if (isset($json['config'])) {
-                    return $this->success('ok', $json['config']);
+                    return $this->success('noLogin', $json['config']);
                 }
             }
         }
-        return $this->error('no Config');
+        return $this->success('no Config', new stdClass());
     }
 }

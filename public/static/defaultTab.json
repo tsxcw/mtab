@@ -276,5 +276,31 @@
       "sort": 8,
       "type": "icon"
     }
-  ]
+  ],
+  "config": {
+    "openType": {
+      "searchOpen": true,
+      "linkOpen": true,
+      "autofocus": true,
+      "searchLink": true,
+      "searchRecommend": true,
+      "tabbar": true
+    },
+    "theme": {
+      "backgroundImage": "/api/background",
+      "blur": 0,
+      "timeColor": "#fff",
+      "tabbar": true,
+      "iconWidth": 70,
+      "iconBg": true,
+      "LinkTitle": false,
+      "iconRadius": 10,
+      "CompactMode": false,
+      "nameColor": "#fff",
+      "opacity": 0.10,
+      "colsGap": 35,
+      "pageGroup": true,
+      "pageGroupStatus": false
+    }
+  }
 }

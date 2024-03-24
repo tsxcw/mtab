@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\RequestException;
 use PHPHtmlParser\Dom;
 use think\facade\Cache;
 use think\facade\Filesystem;
+use think\facade\View;
 use think\helper\Str;
 
 class Api extends BaseController
@@ -24,18 +25,40 @@ class Api extends BaseController
         return $this->success("ok", [
             'email' => $this->Setting('email', ''),
             'qqGroup' => $this->Setting("qqGroup", ''),
+            'beianMps' => $this->Setting("beianMps", ''),
+            'copyright' => $this->Setting("copyright", ''),
             "recordNumber" => $this->Setting("recordNumber", ''),
             "auth" => $auth
         ]);
     }
 
-    public function background()
+    public function background(): \think\response\File
     {
-        $bg = $this->Setting('backgroundImage');
-        if ($bg) {
-            return redirect($bg, 302);
+        $config = $this->Setting('defaultTab', 'static/defaultTab.json', true);
+        if ($config) {
+            $fp = public_path() . $config;
+            if (file_exists($fp)) {
+                $file = file_get_contents($fp);
+                $json = json_decode($file, true);
+                if (isset($json['config']['theme']['backgroundImage'])) {
+                    $bg = $json['config']['theme']['backgroundImage'];
+                    $path = joinPath(public_path(), $bg);
+                    if (file_exists($path)) {
+                        return download($path, 'background')->mimeType(\PluginStaticSystem::mimeType($path))->force(false)->expire(60 * 60 * 24 * 3);
+                    }
+                }
+            }
         }
-        return download("static/background.jpeg",);
+        return download("static/background.jpeg", "background.jpeg")->mimeType(\PluginStaticSystem::mimeType("static/background.jpeg"))->force(false)->expire(60 * 60 * 24 * 3);
+    }
+
+    function globalNotify()
+    {
+        $info = SettingModel::Config("globalNotify", false);
+        if ($info) {
+            return $this->success('ok', $info);
+        }
+        return $this->error('empty');
     }
 
     //获取邮件验证码
@@ -47,7 +70,24 @@ class Api extends BaseController
             if (Cache::get('code' . $mail)) {
                 return $this->success("请勿频繁获取验证码");
             }
-            $status = \Mail::send($mail, "<h2>您的验证码是: <b style='color:#1d5cdc'>$code</b></h2>");
+            $k = SettingModel::Config('smtp_code_template', false);
+            if ($k === false || mb_strlen(trim($k)) == 0) {
+                $k = '
+                        <div style="border:1px #DEDEDE solid;border-top:3px #009944 solid;padding:25px;background-color:#FFF;">
+                            <div style="font-size:17px;font-weight:bold;">邮箱验证码</div>
+                            <div style="font-size:14px;line-height:36px;padding-top:15px;padding-bottom:15px;">
+                                尊敬的用户，您好！<br>
+                                您的验证码是：<b style="color: #1e9fff">{$code}</b>。5分钟内有效，请尽快验证。
+                            </div>
+                            <div style="line-height:15px;">
+                                此致
+                            </div>
+                        </div>
+                ';
+
+            }
+            $html = View::display($k, ['time' => date('Y-m-d H:i:s'), 'code' => $code]);
+            $status = \Mail::send($mail, $html);
             if ($status) {
                 Cache::set('code' . $mail, $code, 60);
                 return $this->success("发送成功");
@@ -198,7 +238,6 @@ class Api extends BaseController
                         }
                     }
                 } catch (\Exception $e) {
-
                 }
             }
             if (strlen($icon) > 0) {
@@ -304,5 +343,11 @@ class Api extends BaseController
             return $this->success("ok", $data);
         }
         return $this->error("not login");
+    }
+
+    function ts()
+    {
+        $k = SettingModel::Config('smtp_code_template');
+        return View::display($k, ["time" => date("Y-m-d H:i:s"), 'code' => 123456]);
     }
 }

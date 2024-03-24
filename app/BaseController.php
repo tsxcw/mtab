@@ -68,6 +68,7 @@ class BaseController
     // 初始化
     protected function initialize()
     {
+
     }
 
     //系统设置项
@@ -98,8 +99,8 @@ class BaseController
      */
     public function getUser(bool $must = false)
     {
-        $id = $this->request->header("Userid", $this->request->cookie('Userid',''));
-        $token = $this->request->header("Token", $this->request->cookie('Token',''));
+        $id = $this->request->header("Userid", $this->request->cookie('Userid', ''));
+        $token = $this->request->header("Token", $this->request->cookie('Token', ''));
         if ($id && $token) {
             if ($this->user_temp) return $this->user_temp;
             $user = TokenModel::where("user_id", $id)->where('token', $token)->field("user_id,token,create_time")->find();

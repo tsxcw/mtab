@@ -43,13 +43,13 @@ class LinkStore extends BaseController
         if ($area && $area != '全部') {
             $list = $list->whereRaw("find_in_set('$area',area)");
         }
-        $list = $list->order($this->request->post('sort.prop','id'), $this->request->post('sort.order','asc'))->paginate($limit);
+        $list = $list->order($this->request->post('sort.prop', 'id'), $this->request->post('sort.order', 'asc'))->paginate($limit);
         return $this->success('ok', $list);
     }
 
     function getFolder(): \think\response\Json
     {
-        return $this->success("ok", LinkFolderModel::order("sort","desc")->select());
+        return $this->success("ok", LinkFolderModel::order("sort", "desc")->select());
     }
 
     private function update(): \think\response\Json
@@ -124,7 +124,6 @@ class LinkStore extends BaseController
                 $model = new LinkFolderModel();
                 $model->insert($form);
             }
-
         } else if ($type === 'del') {
             $id = $this->request->post('id');
             $result = LinkFolderModel::where("id", $id)->find();
@@ -145,8 +144,16 @@ class LinkStore extends BaseController
         $this->getAdmin();
         $ids = $this->request->post('link', []);
         $area = $this->request->post('area', '');
-        LinkStoreModel::where('id', 'in', $ids)->update(['area'=>$area]);
+        LinkStoreModel::where('id', 'in', $ids)->update(['area' => $area]);
         return $this->success('处理完毕！');
+    }
+    function sortFolder()
+    {
+        $sort = (array)$this->request->post();
+        foreach ($sort as $key => $value) {
+            LinkFolderModel::where("id", $value['id'])->update(['sort' => $value['sort']]);
+        }
+        return $this->success("ok");
     }
     public function del(): \think\response\Json
     {

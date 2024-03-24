@@ -7,7 +7,7 @@ class PluginStaticSystem
         $file = preg_replace("#\.\.#", "", $file);
         $file = plugins_path("static/" . $file);
         if (file_exists($file)) {
-            return download($file)->force(false)->mimeType(self::mimeType($file))->header(['Cache-Control' => 'max-age=68400']);
+            return download($file)->force(false)->mimeType(self::mimeType($file))->expire(60*60*24*7);
         }
         return response('', 404);
     }

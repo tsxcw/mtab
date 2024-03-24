@@ -10,19 +10,19 @@ body {
 }
 
 /* 针对WebKit浏览器（如Chrome、Safari等）添加以下样式 */
-::-webkit-scrollbar {
+*::-webkit-scrollbar {
     display: none;
 }
 
-::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     display: none;
 }
 
-::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
     display: none;
 }
 
-::-webkit-scrollbar-corner {
+*::-webkit-scrollbar-corner {
     display: none;
 }
 

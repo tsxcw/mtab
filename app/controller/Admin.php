@@ -191,7 +191,7 @@ class Admin extends BaseController
         $this->getAdmin();
         $user_id = $this->request->post('user_id');
         if ($user_id && !is_demo_mode()) {
-            $list = TokenModel::where("user_id", $user_id)->field('user_id,FROM_UNIXTIME(create_time) as create_time,user_agent,ip')->order('id', 'desc')->limit(100)->select()->toArray();
+            $list = TokenModel::where("user_id", $user_id)->field('user_id,FROM_UNIXTIME(create_time) as create_time,user_agent,ip')->order('create_time', 'desc')->limit(100)->select()->toArray();
             return $this->success('', $list);
         }
         return $this->success('', []);

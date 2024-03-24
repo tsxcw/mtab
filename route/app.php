@@ -1,12 +1,15 @@
 <?php
 
 use think\facade\Route;
-
+Route::any('/index/all',"index/all");
 Route::any('/manager', 'index/index');
 Route::any('/noteApp', "index/index");
+Route::any("/api/background$","api/background");
 Route::any("/", 'index/index');
 Route::any("/favicon", "index/favicon");
-Route::get("/plugins/:dir/static/[:file]", "\PluginStaticSystem@index")->pattern(['dir' => '\w+', 'file' => '[\w||\s\-].*']);//插件静态资源路由文件
+Route::get("/plugins/:dir/static/[:file]", "\PluginStaticSystem@index")->pattern(['dir' => '\w+', 'file' => '[\w||\s\-].*']); //插件静态资源路由文件
+Route::any("/manifest.json", "index/manifest")->cache(60*10);
+Route::any("/searchEngine/searchEngine", "searchEngine/searchEngine");
 
 Route::group("/plugins", function () {
     $pluginsDir = root_path() . "plugins/";
@@ -35,4 +38,4 @@ Route::group("/plugins", function () {
 
 Route::options("[:s]", function () {
     return response('', 200);
-});
+})->cache(60 * 60);
