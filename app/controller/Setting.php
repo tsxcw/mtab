@@ -5,6 +5,7 @@ namespace app\controller;
 
 
 use app\BaseController;
+use app\model\ConfigModel;
 use app\model\SettingModel;
 use think\facade\Cache;
 use think\facade\Db;
@@ -17,15 +18,25 @@ class Setting extends BaseController
         is_demo_mode(true);
         $list = $this->request->post('form');
         $tmp = [];
+        $isAuth = false;
         foreach ($list as $key => $value) {
             $tmp[] = [
                 'keys' => $key,
                 'value' => $value
             ];
+            if ($key === 'authCode') {
+                $isAuth = true;
+            }
         }
         Db::table('setting')->replace()->insertAll($tmp);
         Cache::delete('webConfig');
-        (new \app\controller\admin\Index(app()))->authorization();
+        if ($isAuth) {
+            try {
+                (new \app\controller\admin\Index(app()))->authorization();
+            } catch (\Exception $e) {
+                // throw $e;
+            }
+        }
         return $this->success('保存成功');
     }
 
@@ -57,19 +68,18 @@ class Setting extends BaseController
     function delRuntime(): \think\response\Json
     {
         $admin = $this->getAdmin();
-        try
-        {
+        try {
             $dir = app()->getRuntimePath();
             $this->deleteDirectory($dir);
             return $this->success('删除成功');
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
     }
 
     function getSetting(): \think\response\Json
     {
-        $admin = $this->getAdmin();
+        $this->getAdmin();
         $role = $this->request->post('role', []);
         $info = SettingModel::Config();
         $tmp = [];

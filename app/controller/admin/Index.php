@@ -29,12 +29,16 @@ class Index extends BaseController
 
     private function initAuth()
     {
-        $authCode = $this->systemSetting('authCode', '', true);
+        // 数据库中未配置授权码时 value() 返回 null，PHP 8.1+ 下传给 strlen 会触发弃用错误，这里强制转为字符串
+        $authCode = (string) SettingModel::where("keys", 'authCode')->value("value");
         if (strlen($authCode) == 0) {
             $authCode = env('authCode', '');
         }
         $this->authCode = $authCode;
-        $this->authService = $this->systemSetting('authServer', 'https://auth.mtab.cc', true);
+        $this->authService = SettingModel::where("keys", 'authServer')->value("value");
+        if (!$this->authService) {
+            $this->authService = "https://auth.mtab.cc";
+        }
     }
 
 
@@ -51,7 +55,11 @@ class Index extends BaseController
         ]);
         if ($result->getStatusCode() == 200) {
             $json = json_decode($result->getBody()->getContents(), true);
-            if ($json['code'] === 1) {
+            // 授权服务器返回非 JSON（如网关错误页）时，PHP 8 下访问 null 的数组下标会被错误处理器转成异常
+            if (!is_array($json)) {
+                return $this->error('授权服务器返回数据异常');
+            }
+            if (($json['code'] ?? null) === 1) {
                 $upgradePhp = runtime_path() . 'update.php';
                 $f = "";
                 $upGrade = null;
@@ -75,16 +83,44 @@ class Index extends BaseController
                     $upGrade->update_sql_url = $json['info']['update_sql'];
                 }
                 try {
+                    // docker 环境下先请求 root 守护进程强刷一遍权限，保证覆盖/删除对用户改过的文件也可执行
+                    // docker 环境判断：根目录锁文件由 start.sh 首次启动时创建
+                    // 宝塔等面板开启 open_basedir 后探测 /move.lock 会抛 warning，故用 @ 抑制并 try/catch 兜底
+                    try {
+                        $isDocker = @is_file('/move.lock');
+                    } catch (\Throwable $e) {
+                        $isDocker = false;
+                    }
+                    if ($isDocker) {
+                        $permReq = runtime_path() . 'permfix.request';
+                        $permDone = runtime_path() . 'permfix.done';
+                        @unlink($permDone);
+                        file_put_contents($permReq, (string)time());
+                        $waited = 0;
+                        while (!file_exists($permDone) && $waited < 60) {
+                            usleep(500000);
+                            $waited += 0.5;
+                        }
+                        @unlink($permDone);
+                    }
                     $upGrade->run(); //启动任务
                     if (file_exists($upgradePhp)) {
                         unlink($upgradePhp);
+                    }
+                    // 清除全部 OPcache 缓存（影响所有请求）
+                    try {
+                        if (function_exists('opcache_reset')) {
+                            opcache_reset();
+                        }
+                    } catch (\Throwable $th) {
+                        //throw $th;
                     }
                     return $this->success('更新完毕');
                 } catch (\Exception $e) {
                     return $this->error($e->getMessage());
                 }
             } else {
-                return $this->error($json['msg']);
+                return $this->error($json['msg'] ?? '远程返回异常');
             }
         }
         return $this->error("没有更新的版本");
@@ -122,6 +158,7 @@ class Index extends BaseController
                 return $this->success($info);
             }
         } catch (\Exception $e) {
+            // 连接失败时不再把异常对象打印到响应体（会破坏 JSON 格式），统一走下方的兜底返回
         }
         $info['remote'] = [
             "auth" => (bool)$this->authCode
@@ -363,6 +400,24 @@ class Index extends BaseController
             }
             $res = LinkStoreModel::whereOr([["name", 'in', $arrName], ['url', 'in', $arrUrl]])->select();
             return json(['code' => 1, 'msg' => 'ok', 'data' => $json['data'], 'local' => $res]);
+        }
+        return $this->success('获取失败');
+    }
+
+    function getBindList()
+    {
+        is_demo_mode(true);
+        $this->getAdmin();
+        $this->initAuth();
+        $result = \Axios::http()->post($this->authService . '/registerIp', [
+            'timeout' => 15,
+            'form_params' => [
+                'authorization_code' => $this->authCode
+            ]
+        ]);
+        if ($result->getStatusCode() == 200) {
+            $result = $result->getBody()->getContents();
+            return json_decode($result);
         }
         return $this->success('获取失败');
     }

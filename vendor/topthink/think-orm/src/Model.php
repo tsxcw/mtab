@@ -122,6 +122,12 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     private $lazySave = false;
 
     /**
+     * 缓存自动更新标识
+     * @var bool|string
+     */
+    protected $cacheKey = false;
+
+    /**
      * Db对象
      * @var DbManager
      */
@@ -332,6 +338,18 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
     public function setSuffix(string $suffix)
     {
         $this->suffix = $suffix;
+        return $this;
+    }
+
+    /**
+     * 设置当前查询的自动缓存标识
+     * @access public
+     * @param string|bool $key 缓存标识
+     * @return $this
+     */
+    public function setCacheKey($key)
+    {
+        $this->cacheKey = $key;
         return $this;
     }
 
@@ -641,7 +659,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
 
             $result = $db->where($where)
                 ->strict(false)
-                ->cache(true)
+                ->cache($this->cacheKey)
                 ->setOption('key', $this->key)
                 ->field($allowFields)
                 ->update($data);
@@ -813,7 +831,7 @@ abstract class Model implements JsonSerializable, ArrayAccess, Arrayable, Jsonab
 
         $db->transaction(function () use ($where, $db) {
             // 删除当前模型数据
-            $db->where($where)->delete();
+            $db->where($where)->cache($this->cacheKey)->delete();
 
             // 关联删除
             if (!empty($this->relationWrite)) {

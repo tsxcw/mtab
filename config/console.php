@@ -8,5 +8,7 @@ return [
         'repair' => 'app\command\repair',
         'repass' => 'app\command\repass',
         'upgrade' => 'app\command\upgrade',
+        'test' => 'app\command\test',
+        'backup' => "app\command\backup"
     ],
 ];

@@ -258,7 +258,7 @@ class Mongo extends Connection
         $this->queryStartTime = microtime(true);
 
         if ($session = $this->getSession()) {
-            $this->cursor = $this->mongo->executeQuery($namespace, $query, [
+            $this->cursor = $this->mongo->executeQuery($namespace, $mongoQuery, [
                 'readPreference' => is_null($readPreference) ? new ReadPreference(ReadPreference::RP_PRIMARY) : $readPreference,
                 'session'        => $session,
             ]);

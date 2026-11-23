@@ -1,7 +1,6 @@
-version: '3'
 services:
   mTab:
-    image: itushan/php74:1.3
+    image: itushan/mtab:3.2.6
     container_name: mTabServers
     ports:
       - "3321:80"

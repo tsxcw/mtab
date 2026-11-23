@@ -49,12 +49,6 @@ class BaseController
      */
     protected $middleware = [];
 
-    /**
-     * 构造方法
-     * @access public
-     * @param App $app 应用对象
-     */
-    private $SettingConfig = false;
     public $auth = false;
 
     public function __construct(App $app)
@@ -83,29 +77,14 @@ class BaseController
     //系统设置项
     protected function systemSetting($key = false, $def = false, $emptyReplace = false)
     {
-        if ($this->SettingConfig === false) {
-            $this->SettingConfig = SettingModel::Config();
-        }
-        if ($key) {
-            if (isset($this->SettingConfig[$key])) {
-                if ($emptyReplace && empty($this->SettingConfig[$key])) {
-                    return $def;
-                }
-                return $this->SettingConfig[$key];
-            }
-            return $def;
-        }
-        return $this->SettingConfig;
+
+        return SettingModel::systemSetting($key, $def, $emptyReplace);
     }
 
     /**
      * @description :用户信息获取
      * @param false $must 是否强制验证，true则强制验证程序退出
-     * @return TokenModel|array|bool|mixed|Model|void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
-     */
+     * */
     protected function getUser(bool $must = false)
     {
         return UserModel::getUser($must);

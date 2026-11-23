@@ -6,7 +6,6 @@ INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domai
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('腾讯云', '/static/tencentcloud.png', 'https://cloud.tencent.com/', 'icon', '1x1', '2022-11-10 16:25:51', 1, '腾讯云', 'cloud.tencent.com', 0, 0);
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('阿里云', '/static/aliyun.svg', 'https://www.aliyun.com/', 'icon', '1x1', '2022-11-10 17:30:17', 1, '阿里云', 'www.aliyun.com,aliyun.com', 0, 0);
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('腾讯视频', '/static/txsp.png', 'https://v.qq.com/channel/choice?channel_2022=1', 'icon', '1x1', '2022-12-19 19:34:45', 0, '腾讯视频', 'v.qq.com', 0, 0);
-INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('记事本', '/static/note.png', '/noteApp', 'icon', '1x1', '2023-06-14 21:13:15', 1,'记事本App', '/noteApp', 1, 3);
 INSERT INTO linkstore (name, src, url, type, size, create_time, hot, tips, domain, app, install_num) VALUES ('WebTerm', '/static/webTerm.svg', 'https://ssh.mtab.cc', 'icon', '1x1', '2023-06-14 21:13:15', 1,'在线SSH终端', 'ssh.mtab.cc', 1, 3);
 
 

@@ -5,6 +5,7 @@ namespace app\controller;
 
 
 use app\BaseController;
+use think\facade\View;
 
 class Note extends BaseController
 {
@@ -16,7 +17,7 @@ class Note extends BaseController
         if (!$user) {
             return $this->success('', []);
         }
-        $data = (new \app\model\NoteModel)->where("user_id", $user['user_id'])->field('user_id,id,title,create_time,update_time,weight,sort')->order(['sort'=>'asc','create_time'=>'desc'])->limit($limit)->select();
+        $data = (new \app\model\NoteModel)->where("user_id", $user['user_id'])->field('user_id,id,title,create_time,update_time,weight,sort')->order(['sort' => 'asc', 'create_time' => 'desc'])->limit($limit)->select();
         return $this->success('ok', $data);
     }
 
@@ -53,8 +54,8 @@ class Note extends BaseController
     {
         $user = $this->getUser(true);
         $id = $this->request->get('id');
-        $data = (new \app\model\NoteModel)->where("user_id", $user['user_id'])->field("text,id")->where('id', $id)->find();
-        return response($data['text']);
+        $data = (new \app\model\NoteModel)->where("user_id", $user['user_id'])->field("text,id")->where('id', $id)->value('text');
+        return response($data);
     }
 
     function setWeight(): \think\response\Json

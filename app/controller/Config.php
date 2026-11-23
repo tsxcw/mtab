@@ -34,26 +34,6 @@ class Config extends BaseController
     public function get(): \think\response\Json
     {
         $user = $this->getUser();
-        if ($user) {
-            $data = ConfigModel::find($user['user_id']);
-            if ($data) {
-                return $this->success("ok", $data['config']);
-            }
-        }
-        $config = $this->systemSetting('defaultTab', 'static/defaultTab.json', true);
-        if ($config) {
-            $fp = public_path() . $config;
-            if (!file_exists($fp)) {
-                $fp = public_path() . 'static/defaultTab.json';
-            }
-            if (file_exists($fp)) {
-                $file = file_get_contents($fp);
-                $json = json_decode($file, true);
-                if (isset($json['config'])) {
-                    return $this->success('noLogin', $json['config']);
-                }
-            }
-        }
-        return $this->success('no Config', new stdClass());
+        return $this->success('ok', ConfigModel::getConfigs($user));
     }
 }

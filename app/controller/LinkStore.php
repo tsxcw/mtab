@@ -3,7 +3,6 @@
 namespace app\controller;
 
 use app\BaseController;
-use app\model\ConfigModel;
 use app\model\FileModel;
 use app\model\LinkFolderModel;
 use app\model\LinkStoreModel;

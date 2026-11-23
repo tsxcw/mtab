@@ -10,7 +10,7 @@ use think\facade\Cache;
 
 class Index extends PluginsBase
 {
-    protected $ttl = 180;
+    protected $ttl = 300;
 
     function __construct()
     {
@@ -27,7 +27,7 @@ class Index extends PluginsBase
     {
         $this->getAdmin();
         $list = $this->request->post("conf");
-        CardModel::saveConfigs("topSearch", ['conf'=>$list]);
+        CardModel::saveConfigs("topSearch", ['conf' => $list]);
         $this->clearRedisCache();
         return $this->success('保存成功');
     }
@@ -78,7 +78,7 @@ class Index extends PluginsBase
         $result = $result->getBody()->getContents();
         $result = json_decode($result, true);
         $arr = [];
-        if (count($result['data']) > 0) {
+        if (!empty($result['data'])) {
             foreach ($result['data'] as $value) {
                 $arr [] = array(
                     'title' => $value['question']['title'],
@@ -116,10 +116,11 @@ class Index extends PluginsBase
         } else {
             $tn = false;
         }
-        $list = $result['content'];
+        // 接口未返回 content 时兜底为空数组，避免后续遍历/插入时报错
+        $list = $result['content'] ?? [];
         if (isset($result['topContent'])) {
             $top = $result['topContent'];
-            if (count($top) > 0) {
+            if (!empty($top)) {
                 array_unshift($list, $top[0]);
             }
 
@@ -149,25 +150,19 @@ class Index extends PluginsBase
             if ($c) {
                 return $this->success('cache', $c);
             }
-            $result = \Axios::http()->request('get', 'https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all', [
-                'headers' => [
-                    'path' => '/x/web-interface/ranking/v2?',
-                    'authority' => 'api.bilibili.com',
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
-                ]
-            ]);
+            $result = \Axios::http()->request('get', 'https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid=0&type=all&callback=__jp0');
             $result = $result->getBody()->getContents();
             $result = json_decode($result, true);
             if ($result['code'] == 0) {
                 $list = $result['data']['list'];
-                if (count($list) > 0) {
+                if (!empty($list)) {
                     foreach ($list as $k => $v) {
                         if ($k == 90) {
                             break;
                         }
                         $arr [] = array(
                             'title' => $v['title'],
-                            'hot' => $v['stat']['view'],
+                            'hot' => $v['video_review'],
                             'url' => 'https://www.bilibili.com/video/' . $v['bvid']//$v['short_link'] ?? $v['short_link_v2']
                         );
                     }
@@ -191,13 +186,18 @@ class Index extends PluginsBase
         } catch (ErrorException $e) {
 
         }
-        $result = \Axios::http()->request('get', 'https://weibo.com/ajax/statuses/hot_band');
+        $result = \Axios::http()->request('get', 'https://weibo.com/ajax/side/hotSearch', [
+            'headers' => [
+                'referer' => 'https://weibo.com/hot/search',
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
+            ]
+        ]);
         $result = $result->getBody()->getContents();
         $result = json_decode($result, true);
         $arr = [];
         if ($result['ok'] == 1) {
-            $list = $result['data']['band_list'];
-            if (count($list) > 0) {
+            $list = $result['data']['realtime'];
+            if (!empty($list)) {
                 foreach ($list as $k => $v) {
                     $arr [] = array(
                         'title' => $v['word'],
@@ -228,7 +228,7 @@ class Index extends PluginsBase
         $arr = [];
         if ($result['status'] == 'success') {
             $list = $result['data'];
-            if (count($list) > 0) {
+            if (!empty($list)) {
                 foreach ($list as $k => $v) {
                     $arr [] = array(
                         'title' => $v['Title'],
@@ -257,7 +257,7 @@ class Index extends PluginsBase
         $result = json_decode($result, true);
         $arr = [];
         $list = $result['word_list'];
-        if (count($list) > 0) {
+        if (!empty($list)) {
             foreach ($list as $k => $v) {
                 $arr [] = array(
                     'title' => $v['word'],

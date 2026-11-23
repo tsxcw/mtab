@@ -57,7 +57,8 @@ class CardModel extends Model
     {
         $card = self::where('name_en', $cardName)->value('dict_option');
         try {
-            $json = json_decode($card, true);
+            // 未配置时 value() 返回 null，PHP 8.1+ 传给 json_decode 会触发弃用错误，这里统一转成字符串
+            $json = json_decode((string)$card, true);
             if (isset($json[$key])) {
                 return $json[$key];
             }
@@ -80,7 +81,8 @@ class CardModel extends Model
         $card = self::where('name_en', $cardName)->value('dict_option');
         if ($card) {
             try {
-                return json_decode($card, true);
+                // 未配置时 value() 返回 null，PHP 8.1+ 传给 json_decode 会触发弃用错误，这里统一转成字符串
+                return json_decode((string)$card, true);
             } catch (\Exception $e) {
             }
             return [];

@@ -5,6 +5,7 @@ ini_set('max_execution_time', 300);
 
 use app\BaseController;
 use app\model\FileModel;
+use think\facade\Db;
 
 class File extends BaseController
 {
@@ -67,6 +68,26 @@ class File extends BaseController
         return $fileCount;
     }
 
+    /**
+     * 清理重复入库记录：同一 path 只保留一条，优先保留带 user_id 的，
+     * 同优先级保留 id 最小的。只删数据库记录，不动磁盘文件。
+     * 单条 SQL 实现：内层 GROUP BY 算出每组保留 id，外层包装一层绕开
+     * MySQL 1093（DELETE 目标表不能直接出现在子查询中）的限制。
+     */
+    private function cleanDuplicateRecords(): void
+    {
+        $table = FileModel::getTable();
+        // 归一化 path：反斜杠转正斜杠、去掉前导斜杠，兼容历史数据里的多种写法
+        $norm = "TRIM(LEADING '/' FROM REPLACE(path, '\\\\', '/'))";
+        Db::execute("DELETE FROM {$table} WHERE id NOT IN (
+            SELECT keep_id FROM (
+                SELECT IFNULL(MIN(CASE WHEN user_id IS NOT NULL THEN id END), MIN(id)) AS keep_id
+                FROM {$table}
+                GROUP BY {$norm}
+            ) tmp
+        )");
+    }
+
     function scanLocal(): \think\response\Json
     {
         is_demo_mode(true);
@@ -75,28 +96,37 @@ class File extends BaseController
             return $this->success('扫描完成');
         }
         $this->countFilesInDirectory("images");
-        $list = FileModel::limit(5000)->select()->toArray();
-        foreach ($list as $key => $v) {
-            $index = array_search(joinPath('/', $v['path']), $this->files);
-            if ($index >= 0) {
-                unset($this->files[$index]);
+        $this->cleanDuplicateRecords();
+        // 路径转为哈希表，O(1) 查找，代替 array_search 的 O(n) 逐条查找
+        $fileMap = array_flip($this->files);
+        // 分批读取数据库记录，不限制数量，避免内存溢出
+        // 统一成 "/images/x" 格式再匹配，兼容库中 images、/images、//images、反斜杠等写法
+        FileModel::chunk(5000, function ($list) use (&$fileMap) {
+            foreach ($list as $v) {
+                $path = '/' . ltrim(str_replace('\\', '/', $v['path']), '/');
+                unset($fileMap[$path]);
+            }
+        });
+        $this->files = array_keys($fileMap);
+        // 分批计算元数据并批量入库，兼顾内存与插入速度
+        $all = [];
+        foreach ($this->files as $v) {
+            $p = joinPath(public_path(), $v);
+            $all[] = [
+                'path'        => $v,
+                'user_id'     => null,
+                'create_time' => date('Y-m-d H:i:s'),
+                'size'        => filesize($p) ?: 0,
+                'hash'        => hash_file('md5', $p) ?: '',
+                'mime_type'   => FileModel::detectMimeType($p),
+            ];
+            if (count($all) >= 2000) {
+                FileModel::insertAll($all);
+                $all = [];
             }
         }
-        $all = [];
-        if (count($this->files) > 0) {
-            foreach ($this->files as $key => $v) {
-                $p = joinPath(public_path(), $v);
-                $info = [];
-                $info['path'] = $v;
-                $info['user_id'] = null;
-                $info['create_time'] = date('Y-m-d H:i:s');
-                $info['size'] = filesize($p) ?? 0;
-                $info['hash'] = hash_file("md5", $p);
-                $info['mime_type'] = mime_content_type($p) ?? 'null';
-                $all[] = $info;
-            }
-            $file = new FileModel();
-            $file->saveAll($all);
+        if ($all) {
+            FileModel::insertAll($all);
         }
         return $this->success("扫描完成");
     }

@@ -39,7 +39,10 @@
     "ext-bcmath": "*",
     "ext-gd": "*",
     "ext-libxml": "*",
-    "nette/mail": "^3.1"
+    "nette/mail": "^3.1",
+    "ext-curl": "*",
+    "fabpot/goutte": "^4.0",
+    "orhanerday/open-ai": "^5.3"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

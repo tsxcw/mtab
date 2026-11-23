@@ -29,7 +29,8 @@ class BrowserExtBuild
             'background',
             'cookies',
             'bookmarks',
-            'favicon'
+            'favicon',
+            'search'
         ),
         'action' => array(
             'default_icon' => 'icon/64.png',
@@ -104,7 +105,7 @@ class BrowserExtBuild
         $this->manifest['description'] = $this->info['ext_description'];
         $this->manifest['action']['default_title'] = $this->info['ext_name'];
         $this->manifest['externally_connectable']['matches'] = ["*://{$host}/*"];
-        $this->manifest['host_permissions'] = ["*://{$host}/*", '*://*.baidu.com/*'];
+        $this->manifest['host_permissions'] = ["*://{$host}/*", '*://*.baidu.com/*', '*://*.qq.com/*'];
         file_put_contents(joinPath($this->buildDir, "manifest.json"), json_encode($this->manifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
@@ -114,8 +115,17 @@ class BrowserExtBuild
         if (!is_dir(joinPath($this->buildDir, 'icon'))) {
             mkdir(joinPath($this->buildDir, 'icon'));
         }
+        if(!file_exists(joinPath(public_path(), $this->info['ext_logo_64']))){
+            abort(0, '64px尺寸logo文件不存在');
+        }
         copy(joinPath(public_path(), $this->info['ext_logo_64']), joinPath($this->buildDir, "icon/64.png"));
+        if(!file_exists(joinPath(public_path(), $this->info['ext_logo_128']))){
+            abort(0, '128px尺寸logo文件不存在');
+        }
         copy(joinPath(public_path(), $this->info['ext_logo_128']), joinPath($this->buildDir, "icon/128.png"));
+        if(!file_exists(joinPath(public_path(), $this->info['ext_logo_192']))){
+            abort(0, '192px尺寸logo文件不存在');
+        }
         copy(joinPath(public_path(), $this->info['ext_logo_192']), joinPath($this->buildDir, "icon/192.png"));
     }
 

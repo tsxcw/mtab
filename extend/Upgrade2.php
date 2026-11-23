@@ -4,14 +4,15 @@ ini_set('memory_limit', '500M');
 
 class Upgrade2
 {
-    protected string $archiveFile = ""; //升级文件地址
-    protected string $extractPath = ""; //解压目录地址
-    protected string $root_path = ""; //程序根目录
-    public string $update_download_url = ""; //升级zip文件下载地址
-    public string $update_sql_url = ""; //升级sql脚本文件地址
-    public string $update_script = ""; //升级后执行的脚本地址
-    protected bool $isLog = false;
-    protected array $noMove = [];
+    protected $archiveFile = ""; //升级文件地址
+    protected $extractPath = ""; //解压目录地址
+    protected $root_path = ""; //程序根目录
+    public $update_download_url = ""; //升级zip文件下载地址
+    public $update_sql_url = ""; //升级sql脚本文件地址
+    public $update_script = ""; //升级后执行的脚本地址
+    protected $isLog = false;
+    protected $noMove = [];
+
     //构造方法初始化一些数据
     function __construct($update_download_url = null, $update_sql_url = null, $update_script = null)
     {
@@ -101,6 +102,11 @@ class Upgrade2
         if (!file_exists(root_path() . "exclude.txt")) {
             file_put_contents(root_path() . "exclude.txt", '#从程序根目录开始填写您的更新忽略的文件地址，每行一个，例如/exclude.txt');
         }
+
+        if (function_exists('opcache_reset')) {
+            //如果存在opcache_reset函数，则调用该函数清除缓存。
+            opcache_reset();
+        }
         return true;
     }
 
@@ -127,7 +133,8 @@ class Upgrade2
             fclose($w);
             fclose($f);
             $this->log("\n下载完成");
-        } catch (ErrorException $e) {
+        } catch (\Throwable $e) {
+            // PHP 8 下文件/网络操作的错误类型比 PHP 7 更多（ValueError、TypeError 等），统一按下载失败处理
             return false;
         }
         return true;
@@ -155,51 +162,42 @@ class Upgrade2
     function delZip()
     {
         if (file_exists($this->archiveFile)) {
-            unlink($this->archiveFile);
+            // 删除失败不影响升级主流程，PHP 8 下未抑制的告警会被转成异常
+            @unlink($this->archiveFile);
         }
     }
 
     //解压
     private function unzip($archiveFile, $extractPath): bool
     {
-        //        如果没有ZipArchive类则尝试使用shell_exec，调用自带的解压程序解压
         if (class_exists("ZipArchive")) {
             $zip = new ZipArchive();
             if ($zip->open($archiveFile) === TRUE) {
-                $zip->extractTo($extractPath, null);
+                // 解压失败时不能继续覆盖程序，否则会出现“旧文件已删、新文件没到”的半更新状态
+                $result = $zip->extractTo($extractPath, null);
                 $zip->close();
-            } else {
-                return false;
+                return $result;
             }
-            return true;
+            return false;
         }
-        $cmd = root_path('extend') . "unzip -f {$archiveFile} -d {$extractPath}";
-        if (function_exists("shell_exec")) {
-            $status = shell_exec($cmd);
-            if ($status === '解压成功!') {
-                return true;
-            }
-        } else {
-            $this->log("shell_exec函数被禁用，无法执行解压命令，即将尝试exec");
-        }
-        if (function_exists('exec')) {
-            $status = exec($cmd);
-            if ($status === '解压成功!') {
-                return true;
-            }
-        } else {
-            $this->log('exec函数被禁用，无法执行解压命令，请手动解压覆盖更新');
-        }
+        //不再回退到 shell 解压：避免命令注入风险，缺少 ZipArchive 时提示安装扩展
+        $this->log('未检测到 ZipArchive 扩展，无法解压升级包，请安装 php-zip 扩展后重试');
         return false;
     }
 
     //升级的数据库
     function updateSql($path = null)
     {
-        if ($path) {
-            $f = fopen($path, 'r');
-        } else {
-            $f = fopen($this->update_sql_url, 'r');
+        try {
+            $f = fopen($path ?: $this->update_sql_url, 'r');
+        } catch (\Throwable $e) {
+            // PHP 8 下 fopen 失败会抛异常（PHP 7 返回 false），统一按读取失败处理
+            $this->log('SQL 文件读取失败：' . $e->getMessage());
+            return;
+        }
+        if (!$f) {
+            $this->log('SQL 文件读取失败');
+            return;
         }
         $sql = "";
         do {
@@ -225,7 +223,11 @@ class Upgrade2
         if (!is_dir($dir)) {
             return;
         }
-        $files = scandir($dir);
+        // 目录不可读时 scandir 会告警，PHP 8 下会被错误处理器转成异常，这里直接放弃删除
+        $files = @scandir($dir);
+        if (!is_array($files)) {
+            return;
+        }
         foreach ($files as $file) {
             if ($file != '.' && $file != '..') {
                 if (is_dir("$dir/$file")) {
@@ -242,13 +244,18 @@ class Upgrade2
     function copyDir($source, $dest)
     {
         if (!is_dir($dest)) {
-            mkdir($dest, 0777, true);
+            @mkdir($dest, 0755, true);
         }
-        $files = scandir($source);
+        // 升级包里缺少 mtab 目录或目录不可读时，PHP 8 下 scandir 会抛异常并中断整个升级
+        $files = @scandir($source);
+        if (!is_array($files)) {
+            $this->log('目录读取失败=>' . $source);
+            return;
+        }
         foreach ($files as $file) {
             if ($file !== '.' && $file !== '..') {
                 $src = joinPath($source, '/' . $file);
-                $dst =  joinPath($dest, '/' . $file);
+                $dst = joinPath($dest, '/' . $file);
                 // 检查目标路径是否在 noMove 中，并且是文件
                 if (is_dir($src)) {
                     $this->copyDir($src, $dst);
@@ -257,7 +264,10 @@ class Upgrade2
                         $this->log('跳过=>' . $dst);
                         continue; // 跳过复制
                     }
-                    copy($src, $dst);
+                    // 单个文件复制失败（权限/占用）不应中断整个升级，PHP 8 下未抑制的告警会直接抛异常
+                    if (!@copy($src, $dst)) {
+                        $this->log('复制失败=>' . $dst);
+                    }
                 }
             }
         }

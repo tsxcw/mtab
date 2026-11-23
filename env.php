@@ -19,6 +19,9 @@ if (empty($MYSQL_PORT)) {
 $status = false;
 if ($MYSQL_HOST && $MYSQL_PORT && $MYSQL_USER && $MYSQL_PASSWORD && $MYSQL_DATABASE && $ADMIN_USER && $ADMIN_PASSWORD) {
     print_r("开始安装\n");
+    // PHP 8.1 起 mysqli 默认抛异常：重复执行 install.sql（如容器重建）会因字段已存在直接中断安装，
+    // 这里关闭异常模式，恢复 PHP 7.4 下“查询失败返回 false 并继续”的行为
+    mysqli_report(MYSQLI_REPORT_OFF);
     $conn = new mysqli($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASSWORD, null, (int)$MYSQL_PORT);
     if ($conn->connect_error) {
         die('数据库连接失败');

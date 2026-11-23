@@ -15,7 +15,8 @@ class NoteModel extends Model
 
     function getTextAttr($value): string
     {
-        return modifyImageUrls($value, request()->root(true));
+        // 数据库字段为空时 $value 可能为 null，PHP 8.1+ 下统一按空字符串处理
+        return modifyImageUrls((string)$value, request()->root(true));
     }
 
     function setTextAttr($htmlContent)

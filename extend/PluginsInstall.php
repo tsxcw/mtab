@@ -19,7 +19,7 @@ class PluginsInstall
         $this->extractPath = runtime_path();
         $this->root_path = root_path() . 'plugins/';
         if (!is_dir($this->root_path)) {//不存在插件目录则创建
-            mkdir($this->root_path, 0777, true);
+            mkdir($this->root_path, 0755, true);
         }
         $this->download = $info['download'];
         $this->directory = $info['name_en'];

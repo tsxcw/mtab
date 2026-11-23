@@ -309,7 +309,7 @@ class Fetch
                 $this->query->setOption('soft_delete', null);
                 $this->query->setOption('data', [$field => $condition]);
                 // 生成删除SQL语句
-                $sql = $this->builder->delete($this->query);
+                $sql = $this->builder->update($this->query);
                 return $this->fetch($sql);
             }
         }

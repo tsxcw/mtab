@@ -51,6 +51,9 @@ const sendMessage = (subject, message) => {
     }
     window.parent.postMessage(JSON.stringify(dt), '*')
 }
+
+
+
 window.addEventListener("message", (event) => {
     try {
         const data = JSON.parse(event.data);

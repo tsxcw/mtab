@@ -20,7 +20,8 @@
     "bookmarks",
     "background",
     "activeTab",
-    "cookies"
+    "cookies",
+    "search"
   ],
   "action": {
     "default_icon": "icon/64.png",
@@ -28,7 +29,8 @@
   },
   "host_permissions": [
     "*://go.mtab.cc/*",
-    "*://*.baidu.com/*"
+    "*://*.baidu.com/*",
+    "*://*.qq.com"
   ],
   "chrome_url_overrides": {
     "newtab": "dist/index.html"

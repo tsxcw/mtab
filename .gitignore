@@ -3,7 +3,10 @@
 *.log
 .env
 storage
+/.trae/
+
 /runtime/
+/backup/
 private.key
 publickey.key
 /config/jsonConfig/siteConfig.json
@@ -14,8 +17,12 @@ public/installed.lock
 .user.ini
 /mtab
 mtab.zip
+/public/dist/
 /public/static/exportsTabLink.json
-/vendor
 xy.pem
 /plugins/
 /public/browserExt.zip
+.env.development
+.env.production
+web/.env.development
+*.mimosa/

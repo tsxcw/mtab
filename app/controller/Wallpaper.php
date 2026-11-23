@@ -55,7 +55,7 @@ class Wallpaper extends BaseController
                 }
             }
         }
-        $list = WallpaperModel::where("type", 0)->where("folder", $id)->delete(); //删除数据库数据;
+        WallpaperModel::where("type", 0)->where("folder", $id)->delete(); //删除数据库数据;
         $list = WallpaperModel::where("type", 1)->field("id,name,type,sort,create_time")->order("sort")->select();
         return $this->success("ok", $list);
     }
@@ -88,7 +88,7 @@ class Wallpaper extends BaseController
         $folder_id = $this->request->post("id");
         $offset = $this->request->post("offset", 0);
         if ($folder_id) {
-            $list = WallpaperModel::where("type", 0)->where("folder", $folder_id)->field("create_time,id,folder,cover,type,mime,url")->order("id", 'desc')->limit($offset * 20, 20)->select();
+            $list = WallpaperModel::where("type", 0)->where("folder", $folder_id)->field("create_time,id,folder,cover,type,mime,url")->order("id", 'desc')->limit($offset * 30, 30)->select();
             return $this->success("ok", $list);
         }
     }
@@ -137,6 +137,8 @@ class Wallpaper extends BaseController
                 $res->save($data);
             }
         } else {
+            $maxId = WallpaperModel::max('id');
+            $data['id'] = $maxId ? $maxId + 1 : 1;
             $res = WallpaperModel::create($data);
         }
         return $this->success("ok", $res);

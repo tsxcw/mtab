@@ -11,6 +11,15 @@
   ),
   'versions' => 
   array (
+    'fabpot/goutte' => 
+    array (
+      'pretty_version' => 'v4.0.3',
+      'version' => '4.0.3.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'e3f28671c87a48a0f13ada1baea0d95acc2138c3',
+    ),
     'guzzlehttp/guzzle' => 
     array (
       'pretty_version' => '7.9.2',
@@ -22,12 +31,12 @@
     ),
     'guzzlehttp/promises' => 
     array (
-      'pretty_version' => '2.0.3',
-      'version' => '2.0.3.0',
+      'pretty_version' => '2.0.4',
+      'version' => '2.0.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8',
+      'reference' => 'f9c436286ab2892c7db7be8c8da4ef61ccf7b455',
     ),
     'guzzlehttp/psr7' => 
     array (
@@ -73,6 +82,29 @@
       array (
       ),
       'reference' => 'a4175c62652f2300c8017fb7e640f9ccb11648d2',
+    ),
+    'orhanerday/open-ai' => 
+    array (
+      'pretty_version' => '5.3',
+      'version' => '5.3.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '4ba9c704197b91260c89a1dc147cf46f81824f02',
+    ),
+    'php-http/async-client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '*',
+      ),
+    ),
+    'php-http/client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '*',
+      ),
     ),
     'psr/container' => 
     array (
@@ -158,6 +190,24 @@
       ),
       'reference' => '120b605dfeb996808c31b6477290a714d356e822',
     ),
+    'symfony/browser-kit' => 
+    array (
+      'pretty_version' => 'v5.4.45',
+      'version' => '5.4.45.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '03cce39764429e07fbab9b989a1182a24578341d',
+    ),
+    'symfony/css-selector' => 
+    array (
+      'pretty_version' => 'v5.4.45',
+      'version' => '5.4.45.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '4f7f3c35fba88146b56d0025d20ace3f3901f097',
+    ),
     'symfony/deprecation-contracts' => 
     array (
       'pretty_version' => 'v2.5.3',
@@ -166,6 +216,76 @@
       array (
       ),
       'reference' => '80d075412b557d41002320b96a096ca65aa2c98d',
+    ),
+    'symfony/dom-crawler' => 
+    array (
+      'pretty_version' => 'v5.4.48',
+      'version' => '5.4.48.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'b57df76f4757a9a8dfbb57ba48d7780cc20776c6',
+    ),
+    'symfony/http-client' => 
+    array (
+      'pretty_version' => 'v5.4.49',
+      'version' => '5.4.49.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'd77d8e212cde7b5c4a64142bf431522f19487c28',
+    ),
+    'symfony/http-client-contracts' => 
+    array (
+      'pretty_version' => 'v2.5.5',
+      'version' => '2.5.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '48ef1d0a082885877b664332b9427662065a360c',
+    ),
+    'symfony/http-client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '2.4',
+      ),
+    ),
+    'symfony/mime' => 
+    array (
+      'pretty_version' => 'v5.4.45',
+      'version' => '5.4.45.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '8c1b9b3e5b52981551fc6044539af1d974e39064',
+    ),
+    'symfony/polyfill-ctype' => 
+    array (
+      'pretty_version' => 'v1.32.0',
+      'version' => '1.32.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'a3cc8b044a6ea513310cbd48ef7333b384945638',
+    ),
+    'symfony/polyfill-intl-idn' => 
+    array (
+      'pretty_version' => 'v1.32.0',
+      'version' => '1.32.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9614ac4d8061dc257ecc64cba1b140873dce8ad3',
+    ),
+    'symfony/polyfill-intl-normalizer' => 
+    array (
+      'pretty_version' => 'v1.32.0',
+      'version' => '1.32.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '3833d7255cc303546435cb650316bff708a1c75c',
     ),
     'symfony/polyfill-mbstring' => 
     array (
@@ -176,14 +296,14 @@
       ),
       'reference' => '85181ba99b2345b0ef10ce42ecac37612d9fd341',
     ),
-    'symfony/polyfill-php72' => 
+    'symfony/polyfill-php73' => 
     array (
-      'pretty_version' => 'v1.31.0',
-      'version' => '1.31.0.0',
+      'pretty_version' => 'v1.32.0',
+      'version' => '1.32.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'fa2ae56c44f03bed91a39bfc9822e31e7c5c38ce',
+      'reference' => '0f68c03565dcaaf25a890667542e8bd75fe7e5bb',
     ),
     'symfony/polyfill-php80' => 
     array (
@@ -194,14 +314,14 @@
       ),
       'reference' => '60328e362d4c2c802a54fcbf04f9d3fb892b4cf8',
     ),
-    'symfony/var-dumper' => 
+    'symfony/service-contracts' => 
     array (
-      'pretty_version' => 'v4.4.47',
-      'version' => '4.4.47.0',
+      'pretty_version' => 'v2.5.4',
+      'version' => '2.5.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '1069c7a3fca74578022fab6f81643248d02f8e63',
+      'reference' => 'f37b419f7aea2e9abf10abd261832cace12e3300',
     ),
     'topthink/framework' => 
     array (
@@ -232,21 +352,21 @@
     ),
     'topthink/think-helper' => 
     array (
-      'pretty_version' => 'v3.1.8',
-      'version' => '3.1.8.0',
+      'pretty_version' => 'v3.1.9',
+      'version' => '3.1.9.0',
       'aliases' => 
       array (
       ),
-      'reference' => '612eea76eec2a22f41b0e24be27f49454e4fd5f5',
+      'reference' => 'd554a0a62e4c7034abc7343ee866005c3f399ae2',
     ),
     'topthink/think-orm' => 
     array (
-      'pretty_version' => 'v2.0.61',
-      'version' => '2.0.61.0',
+      'pretty_version' => 'v2.0.62',
+      'version' => '2.0.62.0',
       'aliases' => 
       array (
       ),
-      'reference' => '10528ebf4a5106b19c3bac9c6deae7a67ff49de6',
+      'reference' => 'e53bfea572a133039ad687077120de5521af617f',
     ),
     'topthink/think-template' => 
     array (
@@ -256,15 +376,6 @@
       array (
       ),
       'reference' => '2b28c9f787c94f6c22312c9fe97dd3d926c03e1c',
-    ),
-    'topthink/think-trace' => 
-    array (
-      'pretty_version' => 'v1.6',
-      'version' => '1.6.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '136cd5d97e8bdb780e4b5c1637c588ed7ca3e142',
     ),
     'topthink/think-view' => 
     array (

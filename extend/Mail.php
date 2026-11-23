@@ -19,9 +19,9 @@ class Mail
         if (!$send_mail || !$option['host']) {
             return abort(0, "管理员没有配置SMTP邮件服务");
         }
-        $mail->setFrom(SettingModel::Config('title', '') . " <$send_mail>")
+        $mail->setFrom(SettingModel::Config('title', '新标签页') . " <$send_mail>")
             ->addTo($to)
-            ->setSubject(SettingModel::Config('title', '') . '动态令牌')
+            ->setSubject(SettingModel::Config('title', '新标签页') . '动态令牌')
             ->setHtmlBody($text);
         $ssl = (int)SettingModel::Config('smtp_ssl', '0');
         if (in_array($ssl, [1, 2, 3])) {
@@ -55,10 +55,10 @@ class Mail
     {
         $mail = new Message;
         $send_mail = $config['smtp_email'];
-        $mail->setFrom("测试邮件 <$send_mail>")
+        $mail->setFrom("新标签页 <$send_mail>")
             ->addTo($to)
-            ->setSubject('测试邮件')
-            ->setHtmlBody("这是一个测试邮件");
+            ->setSubject('新标签页验证令牌')
+            ->setHtmlBody("您的验证令牌是：113223");
         $option = [
             'port' => $config['smtp_port'],
             'host' => $config['smtp_host'],

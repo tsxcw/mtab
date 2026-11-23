@@ -14,7 +14,7 @@ class Request extends \think\Request
         header('Access-Control-Allow-Origin:*');
         header('Access-Control-Allow-Methods:*');
         header('Access-Control-Allow-Headers:*');
-
+        header('etag-ac:*');
         $this->encodeType();
         parent::__construct();
     }
@@ -22,8 +22,12 @@ class Request extends \think\Request
     function encodeType()
     {
         $defCode = base64_decode(un_code);
-        if (SettingModel::Config($defCode, env($defCode, false), true)) {
-            header(base64_decode(un_key));
+        try {
+            if (SettingModel::Config($defCode, env($defCode, false), true)) {
+                header(base64_decode(un_key));
+            }
+        } catch (\Throwable $e) {
+            // 数据库表不存在（如首次安装、恢复数据库期间）时忽略
         }
     }
 }

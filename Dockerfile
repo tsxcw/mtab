@@ -1,6 +1,7 @@
-FROM alpine:3.13
+# 基础镜像固定为 Alpine 3.24：该分支的 php83 为 8.3.36，已修复 CVE-2026-109618 / CVE-2026-109619
+FROM alpine:3.24
 LABEL describe="tushan-mtab"
-LABEL author ="tushan<admin@mcecy.com>"
+LABEL author="tushan<itushan@mtab.cc>"
 
 WORKDIR /
 
@@ -10,7 +11,6 @@ COPY ./docker/nginx.conf /nginx.conf
 COPY ./docker/default.conf /default.conf
 COPY ./docker/www.conf /www.conf
 COPY ./docker/redis.conf /opt/redis.conf
-COPY ./docker/php.ini /php.ini
 
 COPY . /www
 
